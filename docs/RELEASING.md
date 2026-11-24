@@ -92,7 +92,7 @@ At release time:
 7. Commit and tag `ui-kit@<version>`.
 8. Publish: `npm publish -w ui-kit` (pre-release: `--tag next`). Add
    `--provenance` only when publishing from CI with OIDC.
-9. Deploy the docs with `UI_SITE_URL` set; check `/llms.txt`, `/r/index.json`
+9. Deploy the docs with `UI_SITE_URL` set (see `docs/DEPLOY.md`); check `/llms.txt`, `/r/index.json`
    and `npx shadcn@latest add <site>/r/button.json` in a scratch app.
 
 ## First-publish checklist

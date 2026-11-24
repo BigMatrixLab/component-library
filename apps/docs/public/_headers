@@ -1,0 +1,23 @@
+# Cloudflare Pages response headers (copied to out/_headers by next build).
+# The registry, AI docs and prompts are fetched cross-origin by the shadcn CLI
+# and AI tools, so they allow any origin and declare UTF-8 explicitly.
+
+/r/*
+  Access-Control-Allow-Origin: *
+  Content-Type: application/json; charset=utf-8
+
+/md/*
+  Access-Control-Allow-Origin: *
+  Content-Type: text/markdown; charset=utf-8
+
+/llms.txt
+  Access-Control-Allow-Origin: *
+  Content-Type: text/plain; charset=utf-8
+
+/llms-full.txt
+  Access-Control-Allow-Origin: *
+  Content-Type: text/plain; charset=utf-8
+
+/prompts/*
+  Access-Control-Allow-Origin: *
+  Content-Type: text/plain; charset=utf-8

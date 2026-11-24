@@ -30,7 +30,7 @@ export default function AiPromptsPage() {
           ]}
         />
         <P>
-          Prompts are generated from the same files the library is built from (<Code>prompts/</Code> + <Code>packages/ui/src</Code>), so they can’t drift from the code. Plain-text versions: <Code>/prompts/&lt;component&gt;/&lt;example&gt;?mode=recreate</Code>.
+          Prompts are generated from the same files the library is built from (<Code>prompts/</Code> + <Code>packages/ui/src</Code>), so they can’t drift from the code. Plain-text versions: <Code>/prompts/&lt;component&gt;/&lt;example&gt;/recreate.txt</Code> and <Code>adapt.txt</Code>, for example <a href="/prompts/button/variants/recreate.txt" className="font-medium text-foreground underline underline-offset-4">/prompts/button/variants/recreate.txt</a>.
         </P>
       </Section>
       <Section id="verified" title="How they are verified">

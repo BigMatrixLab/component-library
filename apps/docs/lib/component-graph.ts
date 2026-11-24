@@ -6,16 +6,19 @@ import { repoRoot } from './source';
 
 /* Works out, from the source itself, which files a component needs: its own
    folder and CSS, plus every library file it imports (recursively). Prompts
-   built from this can't miss a helper or drift from the code. */
+   built from this can't miss a helper or drift from the code.
 
-const UI_SRC = join(repoRoot, 'packages', 'ui', 'src');
+   Paths are built from the repo root at build time; the turbopackIgnore
+   comments stop Turbopack from tracing the whole project for these reads. */
+
+const UI_SRC = join(/* turbopackIgnore: true */ repoRoot, 'packages', 'ui', 'src');
 const toRepo = (abs: string) => relative(repoRoot, abs).split('\\').join('/');
 
 const IMPORT_RE = /(?:import|export)\s[^'"]*?from\s*['"](\.{1,2}\/[^'"]+)['"]/g;
 
 function resolveImport(fromFile: string, spec: string): string | null {
-  const base = join(dirname(fromFile), spec);
-  for (const candidate of [`${base}.ts`, `${base}.tsx`, join(base, 'index.ts'), join(base, 'index.tsx'), base]) {
+  const base = join(/* turbopackIgnore: true */ dirname(fromFile), spec);
+  for (const candidate of [`${base}.ts`, `${base}.tsx`, join(/* turbopackIgnore: true */ base, 'index.ts'), join(/* turbopackIgnore: true */ base, 'index.tsx'), base]) {
     if (existsSync(candidate) && /\.(ts|tsx)$/.test(candidate)) return candidate;
   }
   return null;
@@ -49,11 +52,11 @@ export interface ComponentGraph {
 const EXPORT_RE = /export\s+(?:const|function|class|let)\s+([A-Za-z0-9_]+)/g;
 
 export async function componentGraph(name: string): Promise<ComponentGraph | null> {
-  const dir = join(UI_SRC, 'components', name);
+  const dir = join(/* turbopackIgnore: true */ UI_SRC, 'components', name);
   if (!existsSync(dir)) return null;
   const own = (await readdir(dir))
     .filter((f) => /\.(ts|tsx)$/.test(f) && !/\.test\./.test(f) && !/^index\./.test(f))
-    .map((f) => join(dir, f));
+    .map((f) => join(/* turbopackIgnore: true */ dir, f));
   if (!own.length) return null;
 
   const all = new Set<string>();
@@ -70,7 +73,7 @@ export async function componentGraph(name: string): Promise<ComponentGraph | nul
     if (m) usedComponents.add(m[1]!);
   }
   const cssFiles = [...usedComponents]
-    .map((c) => join(UI_SRC, 'styles', 'components', `${c}.css`))
+    .map((c) => join(/* turbopackIgnore: true */ UI_SRC, 'styles', 'components', `${c}.css`))
     .filter((p) => existsSync(p));
 
   const exports: string[] = [];
@@ -90,7 +93,7 @@ export async function componentGraph(name: string): Promise<ComponentGraph | nul
 
 /** Every component folder in the library. */
 export async function allComponentNames(): Promise<string[]> {
-  return (await readdir(join(UI_SRC, 'components'), { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name);
+  return (await readdir(join(/* turbopackIgnore: true */ UI_SRC, 'components'), { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name);
 }
 
 export const posixJoin = posix.join;

@@ -6,7 +6,7 @@
     "dev": "next dev --port 4321",
     "prebuild": "node ../../scripts/gen-registry.mjs && node ../../scripts/gen-llms.mjs",
     "build": "next build",
-    "start": "next start --port 4321",
+    "start": "npx --yes serve@14 out -l 4321",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

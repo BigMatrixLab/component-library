@@ -39,5 +39,5 @@ Gaps and follow-ups found while building. Tick off as they land.
 ## Release
 
 - [ ] D8 npm name, then remove `"private": true` (see docs/RELEASING.md)
-- [ ] Docs static export for Cloudflare Pages: `output: 'export'`, `generateStaticParams`,
+- [x] Docs static export for Cloudflare Pages: `output: 'export'`, `generateStaticParams`,
       prompts as `/prompts/<component>/<example>/{recreate,adapt}.txt`

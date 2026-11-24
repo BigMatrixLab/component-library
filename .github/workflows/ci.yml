@@ -23,6 +23,9 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      # ai/ is generated; fail when it is stale or a new doc was not committed
+      - name: ai/ docs up to date
+        run: npm run gen:ai && git diff --exit-code ai/ && test -z "$(git status --porcelain ai/)"
 
   e2e:
     name: e2e ${{ matrix.project }} ${{ matrix.shard }}/4

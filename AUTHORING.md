@@ -70,7 +70,7 @@ all derived from it.
 2. `npm test` (Vitest) passes.
 3. `npx playwright test` passes in Chromium, WebKit, Firefox, iPhone and Pixel profiles, including axe in
    light and dark.
-4. Prompt verified: export the Recreate prompt (`/prompts/<name>/<example>?mode=recreate`), give it to a
+4. Prompt verified: export the Recreate prompt (`/prompts/<name>/<example>/recreate.txt`), give it to a
    fresh agent with no repo access, write its output to `apps/verify/output/`, run
    `node scripts/prompt-verify/compare.mjs <name>/<example>` → PASS.
 5. Light, dark and at least one saturated accent checked by eye at 1440px and 390px.

@@ -21,7 +21,7 @@ const systemPrompt = cache(async () => {
 const componentSpec = cache(async (name: string) => {
   // "blocks/<name>" reads prompts/blocks/<name>.md; anything else is a component spec
   const path = name.startsWith('blocks/') ? `prompts/${name}.md` : `prompts/components/${name}.md`;
-  return existsSync(join(repoRoot, path)) ? readRepoFile(path) : `## Component: ${name}\n\n(Spec pending.)\n`;
+  return existsSync(join(/* turbopackIgnore: true */ repoRoot, path)) ? readRepoFile(path) : `## Component: ${name}\n\n(Spec pending.)\n`;
 });
 
 const graphs = cache(async () => {
@@ -78,7 +78,7 @@ export async function buildPrompts(component: string, example: string, exampleTi
   for (const f of componentFileSet) {
     const m = f.match(/packages\/ui\/src\/components\/([^/]+)\//);
     const css = m && `packages/ui/src/styles/components/${m[1]}.css`;
-    if (css && existsSync(join(repoRoot, css)) && !cssFiles.includes(css)) cssFiles.push(css);
+    if (css && existsSync(join(/* turbopackIgnore: true */ repoRoot, css)) && !cssFiles.includes(css)) cssFiles.push(css);
   }
   const helpers = [...helperSet].sort();
   const componentFiles = [...componentFileSet];

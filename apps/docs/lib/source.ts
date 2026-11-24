@@ -7,15 +7,15 @@ import { join, resolve } from 'node:path';
 export const repoRoot = (() => {
   let dir = process.cwd();
   for (let i = 0; i < 5; i++) {
-    if (existsSync(join(dir, 'packages', 'ui'))) return dir;
-    dir = resolve(dir, '..');
+    if (existsSync(join(/* turbopackIgnore: true */ dir, 'packages', 'ui'))) return dir;
+    dir = resolve(/* turbopackIgnore: true */ dir, '..');
   }
   throw new Error('Could not find the monorepo root from ' + process.cwd());
 })();
 
 /** Read a file relative to the monorepo root. */
 export function readRepoFile(path: string) {
-  return readFile(join(repoRoot, path), 'utf8');
+  return readFile(join(/* turbopackIgnore: true */ repoRoot, path), 'utf8');
 }
 
 /** Read a docs example's source (apps/docs/examples/<file>.tsx). */
