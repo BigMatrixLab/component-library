@@ -1,0 +1,81 @@
+/* Switch ------------------------------------------------------------------
+   <button class="ui-switch [ui-switch-sm]" role="switch" aria-checked data-state="checked|unchecked">
+     <span class="ui-switch-thumb">
+   Optional row: <div class="ui-switch-field [ui-switch-field-start]"> switch + .ui-switch-text (.ui-switch-label, .ui-switch-description)
+   Tokens: --ui-control-on (checked track), --ui-control-track, --ui-control-thumb.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-switch {
+    --sw-w: 2.5rem;
+    --sw-h: 1.5rem;
+    --sw-pad: 2px;
+    --sw-thumb: 1.25rem;
+    --sw-grow: 0.25rem;
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    width: var(--sw-w);
+    height: var(--sw-h);
+    padding: 0;
+    border: 0;
+    border-radius: 9999px;
+    background-color: var(--ui-control-track);
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--ui-duration) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-switch-sm {
+    --sw-w: 2rem;
+    --sw-h: 1.125rem;
+    --sw-thumb: 0.875rem;
+    --sw-grow: 0.1875rem;
+  }
+  /* Phones: keep the visible size, grow the tap area to 44px */
+  @media (pointer: coarse) {
+    .ui-switch::after { content: ""; position: absolute; inset: calc((var(--sw-h) - 2.75rem) / 2) -0.375rem; }
+  }
+
+  .ui-switch[aria-checked="true"] { background-color: var(--ui-control-on); }
+
+  .ui-switch-thumb {
+    --sw-x: 0px;
+    display: block;
+    width: var(--sw-thumb);
+    height: var(--sw-thumb);
+    margin-inline-start: var(--sw-pad);
+    border-radius: 9999px;
+    background-color: var(--ui-control-thumb);
+    box-shadow: var(--ui-shadow-sm);
+    transform: translateX(var(--sw-x));
+    transition:
+      transform var(--ui-spring-smooth-duration) var(--ui-spring-smooth),
+      width var(--ui-duration-fast) var(--ui-ease-out);
+  }
+  .ui-switch[aria-checked="true"] .ui-switch-thumb { --sw-x: calc(var(--sw-w) - var(--sw-thumb) - 2 * var(--sw-pad)); }
+
+  /* The thumb widens while pressed; the checked thumb keeps its right edge */
+  .ui-switch:active:not(:disabled) .ui-switch-thumb { width: calc(var(--sw-thumb) + var(--sw-grow)); }
+  .ui-switch[aria-checked="true"]:active:not(:disabled) .ui-switch-thumb { --sw-x: calc(var(--sw-w) - var(--sw-thumb) - var(--sw-grow) - 2 * var(--sw-pad)); }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ui-switch[aria-checked="false"]:hover:not(:disabled) { background-color: color-mix(in oklch, var(--ui-control-track) 88%, var(--ui-foreground)); }
+    .ui-switch[aria-checked="true"]:hover:not(:disabled) { background-color: color-mix(in oklch, var(--ui-control-on) 88%, var(--ui-background)); }
+  }
+  .ui-switch:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-switch:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Row with label + description */
+  .ui-switch-field { display: flex; align-items: flex-start; gap: 0.75rem; }
+  .ui-switch-field-start { flex-direction: row-reverse; justify-content: space-between; }
+  .ui-switch-field > .ui-switch { margin-top: calc((var(--text-base--line-height) - var(--sw-h)) / 2); }
+  .ui-switch-text { display: grid; gap: 0.125rem; min-width: 0; }
+  .ui-switch-label { font-size: var(--text-base); line-height: var(--text-base--line-height); font-weight: 500; color: var(--ui-foreground); cursor: pointer; user-select: none; }
+  .ui-switch-description { font-size: var(--text-sm); line-height: var(--text-sm--line-height); color: var(--ui-muted-foreground); }
+  .ui-switch-field[data-disabled] .ui-switch-label { cursor: not-allowed; }
+  .ui-switch-field[data-disabled] .ui-switch-text { opacity: 0.5; }
+}

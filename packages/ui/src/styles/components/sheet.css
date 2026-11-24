@@ -1,0 +1,175 @@
+/* Sheet -------------------------------------------------------------------
+   <dialog class="ui-sheet" data-side="right|left|top|bottom" data-state="open|closed">
+     ::before                                              overlay (fades on its own)
+     <div class="ui-sheet-panel">                          the sliding surface
+       .ui-sheet-handle (bottom only)  .ui-sheet-close
+       .ui-sheet-header > .ui-sheet-title + .ui-sheet-description
+       .ui-sheet-body (scrolls)  .ui-sheet-footer
+   Sizes: .ui-sheet-sm | (md) | .ui-sheet-lg | .ui-sheet-xl | .ui-sheet-full
+   Phones: .ui-sheet-mobile-full makes a left/right sheet fill the screen
+   ------------------------------------------------------------------------ */
+
+@keyframes ui-sheet-overlay-out { to { opacity: 0; } }
+
+@layer components {
+  .ui-sheet {
+    --ui-sheet-width: 25rem;
+    --ui-sheet-progress: 0;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    color: var(--ui-foreground);
+  }
+  .ui-sheet[open] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .ui-sheet-sm { --ui-sheet-width: 20rem; }
+  .ui-sheet-lg { --ui-sheet-width: 32.5rem; }
+  .ui-sheet-xl { --ui-sheet-width: 40rem; }
+  .ui-sheet-full { --ui-sheet-width: 100vw; }
+
+  .ui-sheet[data-side="right"] { justify-items: end; }
+  .ui-sheet[data-side="left"] { justify-items: start; }
+  .ui-sheet[data-side="top"] { justify-items: center; align-items: start; }
+  .ui-sheet[data-side="bottom"] { justify-items: center; align-items: end; }
+
+  /* Overlay: a pseudo-element, so the panel does not fade with it */
+  .ui-sheet::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--ui-overlay);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: calc(1 - var(--ui-sheet-progress));
+  }
+  .ui-sheet:not([data-dragging])::before { transition: opacity var(--ui-duration) var(--ui-ease-out); }
+  .ui-sheet[data-state="open"]::before { animation: ui-fade-in var(--ui-duration-slow) var(--ui-ease-out) backwards; }
+  .ui-sheet[data-state="closed"]::before { animation: ui-sheet-overlay-out var(--ui-duration-exit) var(--ui-ease-in) forwards; }
+  .ui-sheet[data-state="closed"] { pointer-events: none; }
+
+  .ui-sheet-panel {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--ui-surface-raised);
+    color: var(--ui-surface-raised-foreground);
+    box-shadow: var(--ui-shadow-lg);
+    outline: none;
+    overscroll-behavior: contain;
+  }
+  .ui-sheet:not([data-dragging]) .ui-sheet-panel {
+    transition: transform var(--ui-spring-smooth-duration) var(--ui-spring-smooth);
+  }
+
+  /* Side sheets: full height, a width, a border on the inner edge */
+  .ui-sheet[data-side="right"] .ui-sheet-panel,
+  .ui-sheet[data-side="left"] .ui-sheet-panel {
+    width: min(var(--ui-sheet-width), calc(100vw - 3rem));
+    height: 100%;
+  }
+  .ui-sheet-full[data-side="right"] .ui-sheet-panel,
+  .ui-sheet-full[data-side="left"] .ui-sheet-panel { width: 100%; }
+  .ui-sheet[data-side="right"] .ui-sheet-panel { border-inline-start: 1px solid var(--ui-border); }
+  .ui-sheet[data-side="left"] .ui-sheet-panel { border-inline-end: 1px solid var(--ui-border); }
+
+  /* Top / bottom sheets: as tall as the content (up to 90% of the screen), capped width */
+  .ui-sheet[data-side="top"] .ui-sheet-panel,
+  .ui-sheet[data-side="bottom"] .ui-sheet-panel {
+    width: 100%;
+    max-width: calc(var(--ui-sheet-width) + 14rem);
+    max-height: 90dvh;
+  }
+  .ui-sheet-full[data-side="top"] .ui-sheet-panel,
+  .ui-sheet-full[data-side="bottom"] .ui-sheet-panel { max-width: none; }
+  .ui-sheet[data-side="bottom"] .ui-sheet-panel {
+    border: 1px solid var(--ui-border);
+    border-bottom: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .ui-sheet[data-side="top"] .ui-sheet-panel {
+    border: 1px solid var(--ui-border);
+    border-top: 0;
+    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  }
+
+  @media (max-width: 639px) {
+    .ui-sheet-mobile-full[data-side="right"] .ui-sheet-panel,
+    .ui-sheet-mobile-full[data-side="left"] .ui-sheet-panel { width: 100%; border-inline: 0; }
+  }
+
+  /* Motion: panels slide on the smooth spring (never overshoots); exits are quicker */
+  .ui-sheet[data-state="open"] .ui-sheet-panel {
+    animation: var(--ui-sheet-in, ui-slide-in-right) var(--ui-spring-smooth-duration) var(--ui-spring-smooth) backwards;
+  }
+  .ui-sheet[data-state="closed"] .ui-sheet-panel {
+    animation: var(--ui-sheet-out, ui-slide-out-right) 200ms var(--ui-ease-in) forwards;
+  }
+  .ui-sheet[data-side="right"] { --ui-sheet-in: ui-slide-in-right; --ui-sheet-out: ui-slide-out-right; }
+  .ui-sheet[data-side="left"] { --ui-sheet-in: ui-slide-in-left; --ui-sheet-out: ui-slide-out-left; }
+  .ui-sheet[data-side="top"] { --ui-sheet-in: ui-slide-in-top; --ui-sheet-out: ui-slide-out-top; }
+  .ui-sheet[data-side="bottom"] { --ui-sheet-in: ui-slide-in-bottom; --ui-sheet-out: ui-slide-out-bottom; }
+
+  /* Grab handle: a generous drag surface with a small visible pill */
+  .ui-sheet-handle {
+    flex: none;
+    display: flex;
+    justify-content: center;
+    padding: 0.625rem 0 0.375rem;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .ui-sheet-handle::before {
+    content: "";
+    width: 2.5rem;
+    height: 0.3125rem;
+    border-radius: 999px;
+    background: var(--ui-border-strong);
+  }
+  .ui-sheet[data-dragging] .ui-sheet-handle { cursor: grabbing; }
+
+  .ui-sheet-header { display: grid; gap: 0.375rem; padding: 1.25rem 3.5rem 1rem 1.5rem; flex: none; }
+  .ui-sheet-title { font-family: var(--ui-font-display); font-size: var(--text-lg); line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; }
+  .ui-sheet-description { font-size: var(--text-base); color: var(--ui-muted-foreground); }
+  .ui-sheet-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0.25rem 1.5rem 1rem; font-size: var(--text-base); display: grid; gap: 1rem; align-content: start; }
+  .ui-sheet-footer {
+    flex: none;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0));
+    border-top: 1px solid var(--ui-border-subtle);
+  }
+  @media (min-width: 640px) { .ui-sheet-footer { flex-direction: row; justify-content: flex-end; } }
+
+  .ui-sheet-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--radius-md);
+    color: var(--ui-muted-foreground);
+    cursor: pointer;
+    transition: background-color var(--ui-duration-fast) var(--ui-ease-standard), color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-sheet[data-side="bottom"] .ui-sheet-close { top: 1.25rem; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-sheet-close:hover { background: var(--ui-accent); color: var(--ui-foreground); }
+  }
+  .ui-sheet-close:focus-visible { outline: 2px solid color-mix(in oklch, var(--ui-ring) 75%, transparent); outline-offset: 1px; }
+}

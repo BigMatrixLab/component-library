@@ -1,0 +1,84 @@
+/* ==========================================================================
+   kit.css — everything except Tailwind itself.
+   For apps that already run Tailwind v4:
+     @import "tailwindcss";
+     @import "ui-kit/kit.css";
+   ========================================================================== */
+
+@import "./tokens/palette.css";
+@import "./tokens/semantic.css";
+@import "./tokens/accents.css";
+@import "./tokens/tailwind.css";
+@import "./base.css";
+@import "./motion.css";
+
+@import "./components/button.css";
+@import "./components/dialog.css";
+@import "./components/field.css";
+@import "./components/input.css";
+@import "./components/textarea.css";
+@import "./components/native-select.css";
+@import "./components/checkbox.css";
+@import "./components/radio-group.css";
+@import "./components/switch.css";
+@import "./components/slider.css";
+@import "./components/badge.css";
+@import "./components/avatar.css";
+@import "./components/kbd.css";
+@import "./components/separator.css";
+@import "./components/card.css";
+@import "./components/skeleton.css";
+@import "./components/spinner.css";
+@import "./components/progress.css";
+@import "./components/alert.css";
+@import "./components/toast.css";
+@import "./components/tooltip.css";
+@import "./components/popover.css";
+@import "./components/dropdown-menu.css";
+@import "./components/sheet.css";
+@import "./components/tabs.css";
+@import "./components/accordion.css";
+@import "./components/chart.css";
+@import "./components/calendar.css";
+@import "./components/input-otp.css";
+@import "./components/toggle-group.css";
+@import "./components/rating.css";
+@import "./components/select.css";
+@import "./components/combobox.css";
+@import "./components/multi-select.css";
+@import "./components/context-menu.css";
+@import "./components/menubar.css";
+@import "./components/hover-card.css";
+@import "./components/command.css";
+@import "./components/number-input.css";
+@import "./components/tag-input.css";
+@import "./components/file-dropzone.css";
+@import "./components/breadcrumb.css";
+@import "./components/pagination.css";
+@import "./components/navbar.css";
+@import "./components/sidebar.css";
+@import "./components/navigation-menu.css";
+@import "./components/stepper.css";
+@import "./components/timeline.css";
+@import "./components/carousel.css";
+@import "./components/scroll-area.css";
+@import "./components/resizable.css";
+@import "./components/empty-state.css";
+@import "./components/item.css";
+@import "./components/date-picker.css";
+@import "./components/time-picker.css";
+@import "./components/table.css";
+@import "./components/data-table.css";
+@import "./components/description-list.css";
+@import "./components/copy-button.css";
+@import "./components/stat.css";
+@import "./components/animated-counter.css";
+@import "./components/action-button.css";
+@import "./components/hold-to-confirm.css";
+@import "./components/confirm-morph.css";
+@import "./components/inline-edit.css";
+@import "./components/expanding-search.css";
+@import "./components/theme-switch.css";
+
+/* Let Tailwind see utility classes used inside the components */
+@source "../components";

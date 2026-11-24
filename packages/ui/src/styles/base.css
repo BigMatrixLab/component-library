@@ -1,0 +1,38 @@
+/* ==========================================================================
+   Base — defaults on top of Tailwind preflight.
+   ========================================================================== */
+
+:root {
+  --ui-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ui-font-display: var(--ui-font-sans);
+  --ui-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+@layer base {
+  * { border-color: var(--ui-border); }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    background-color: var(--ui-background);
+    color: var(--ui-foreground);
+    font-family: var(--ui-font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+  ::selection { background: color-mix(in oklch, var(--ui-primary) 22%, transparent); }
+
+  /* Keyboard focus gets a ring; pointer focus does not */
+  :focus-visible { outline: 2px solid color-mix(in oklch, var(--ui-ring) 75%, transparent); outline-offset: 2px; }
+
+  [hidden]:where(:not([hidden="until-found"])) { display: none !important; }
+
+  /* Native top-layer elements start unstyled; components style them */
+  dialog, [popover] { color: inherit; background: none; border: 0; padding: 0; margin: 0; max-width: none; max-height: none; overflow: visible; }
+  dialog::backdrop, [popover]::backdrop { background: transparent; }
+
+  * { scrollbar-width: thin; scrollbar-color: color-mix(in oklch, var(--ui-foreground) 18%, transparent) transparent; }
+}

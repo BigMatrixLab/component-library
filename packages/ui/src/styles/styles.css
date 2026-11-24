@@ -1,0 +1,3 @@
+/* Prebuilt stylesheet entry → dist/styles.css (Tailwind + kit). */
+@import "tailwindcss" source(none);
+@import "./kit.css";

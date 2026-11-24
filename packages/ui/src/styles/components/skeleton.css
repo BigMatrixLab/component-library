@@ -1,0 +1,33 @@
+/* Skeleton ----------------------------------------------------------------
+   <div class="ui-skeleton" aria-hidden="true" style="width:60%">   text line (16px)
+   + shape: -circle (width = height, set inline) | -block (96px, md radius)
+   A faint band sweeps across (--animate-shimmer); reduced motion = static.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-skeleton {
+    --ui-skeleton-base: color-mix(in oklch, var(--ui-foreground) 8%, transparent);
+    --ui-skeleton-shine: color-mix(in oklch, var(--ui-surface) 70%, transparent);
+    display: block;
+    width: 100%;
+    height: 1rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    background-color: var(--ui-skeleton-base);
+    background-image: linear-gradient(90deg, transparent 30%, var(--ui-skeleton-shine) 50%, transparent 70%);
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    animation: var(--animate-shimmer);
+  }
+  /* On dark surfaces the highlight is a lighter band, not a darker one */
+  :where(.dark, [data-theme-mode="dark"]) .ui-skeleton {
+    --ui-skeleton-base: color-mix(in oklch, var(--ui-foreground) 10%, transparent);
+    --ui-skeleton-shine: color-mix(in oklch, var(--ui-foreground) 9%, transparent);
+  }
+  .ui-skeleton-circle { border-radius: 9999px; }
+  .ui-skeleton-block { height: 6rem; border-radius: var(--radius-md); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-skeleton { animation: none; background-image: none; }
+  }
+}

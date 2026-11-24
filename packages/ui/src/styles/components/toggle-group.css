@@ -1,0 +1,152 @@
+/* Toggle, ToggleGroup, SegmentedControl ------------------------------------
+   .ui-toggle [+ -outline] [+ -sm|-lg] [+ -icon]      state: [aria-pressed="true"] / [data-state="on"]
+   .ui-toggle-group [data-variant="outline"]           items joined into one bar
+   .ui-seg > .ui-seg-pill + .ui-seg-item*              state: [aria-checked="true"]
+     Pill position comes from --ui-seg-x/-y/-w/-h set by the component;
+     [data-ready] turns the glide on (not on first render); [data-has-pill] shows it.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  /* Toggle */
+  .ui-toggle {
+    --ui-toggle-on: color-mix(in oklch, var(--ui-primary) 12%, transparent);
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.25rem;
+    min-width: 2.25rem;
+    padding-inline: 0.75rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background-color: transparent;
+    color: var(--ui-foreground);
+    font-size: var(--text-base);
+    line-height: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      color var(--ui-duration-fast) var(--ui-ease-standard),
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  .ui-toggle > svg { width: 1rem; height: 1rem; flex-shrink: 0; pointer-events: none; }
+  .ui-toggle-sm { height: 2rem; min-width: 2rem; padding-inline: 0.625rem; font-size: var(--text-sm); }
+  .ui-toggle-lg { height: 2.75rem; min-width: 2.75rem; padding-inline: 1rem; border-radius: var(--radius-lg); font-size: var(--text-md); }
+  .ui-toggle-icon { padding-inline: 0; width: 2.25rem; }
+  .ui-toggle-icon.ui-toggle-sm { width: 2rem; }
+  .ui-toggle-icon.ui-toggle-lg { width: 2.75rem; }
+
+  .ui-toggle-outline {
+    border-color: var(--ui-border-strong);
+    background-color: var(--ui-background);
+    box-shadow: var(--ui-shadow-xs);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-toggle:hover:not(:disabled, [aria-pressed="true"]) { background-color: var(--ui-accent); color: var(--ui-accent-foreground); }
+  }
+  .ui-toggle:active:not(:disabled) { transform: scale(0.97); }
+  .ui-toggle-icon:active:not(:disabled) { transform: scale(0.94); }
+  .ui-toggle:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); z-index: 1; }
+
+  .ui-toggle[aria-pressed="true"] { background-color: var(--ui-toggle-on); color: var(--ui-primary-text); }
+  .ui-toggle-outline[aria-pressed="true"] { border-color: color-mix(in oklch, var(--ui-primary) 45%, var(--ui-border-strong)); }
+  .ui-toggle:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Group */
+  .ui-toggle-group { display: inline-flex; align-items: center; gap: 0.125rem; max-width: 100%; }
+  .ui-toggle-group[data-orientation="vertical"] { flex-direction: column; align-items: stretch; }
+  .ui-toggle-group[data-variant="outline"] { gap: 0; }
+  .ui-toggle-group[data-variant="outline"] > .ui-toggle { border-radius: 0; }
+  .ui-toggle-group[data-variant="outline"] > .ui-toggle:first-child { border-start-start-radius: var(--radius-md); border-end-start-radius: var(--radius-md); }
+  .ui-toggle-group[data-variant="outline"] > .ui-toggle:last-child { border-start-end-radius: var(--radius-md); border-end-end-radius: var(--radius-md); }
+  .ui-toggle-group[data-variant="outline"]:not([data-orientation="vertical"]) > .ui-toggle + .ui-toggle { margin-inline-start: -1px; }
+  .ui-toggle-group[data-variant="outline"][data-orientation="vertical"] > .ui-toggle + .ui-toggle { margin-top: -1px; }
+  .ui-toggle-group[data-variant="outline"] > .ui-toggle[aria-pressed="true"] { z-index: 1; }
+
+  /* Segmented control */
+  .ui-seg {
+    --ui-seg-h-item: 2rem;
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: stretch;
+    max-width: 100%;
+    padding: 3px;
+    border-radius: var(--radius-lg);
+    background-color: var(--ui-surface-muted);
+  }
+  .ui-seg[data-size="sm"] { --ui-seg-h-item: 1.625rem; }
+  .ui-seg[data-size="lg"] { --ui-seg-h-item: 2.5rem; }
+  .ui-seg[data-full] { display: flex; width: 100%; }
+  .ui-seg[data-full] > .ui-seg-item { flex: 1 1 0; }
+
+  .ui-seg-pill {
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    width: var(--ui-seg-w, 0);
+    height: var(--ui-seg-h, 0);
+    transform: translate(var(--ui-seg-x, 0), var(--ui-seg-y, 0));
+    border-radius: calc(var(--radius-lg) - 3px);
+    background-color: var(--ui-surface-raised);
+    box-shadow: var(--ui-shadow-sm), 0 0 0 1px var(--ui-border-subtle);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ui-seg[data-has-pill] > .ui-seg-pill { opacity: 1; }
+  .ui-seg[data-ready] > .ui-seg-pill {
+    transition:
+      transform var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      width var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      height var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      opacity var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+
+  .ui-seg-item {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    height: var(--ui-seg-h-item);
+    padding-inline: 0.875rem;
+    border: 0;
+    border-radius: calc(var(--radius-lg) - 3px);
+    background: transparent;
+    color: color-mix(in oklch, var(--ui-foreground) 68%, var(--ui-surface-muted));
+    font-size: var(--text-base);
+    line-height: 1;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--ui-duration-fast) var(--ui-ease-standard), box-shadow var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-seg[data-size="sm"] .ui-seg-item { padding-inline: 0.625rem; font-size: var(--text-sm); }
+  .ui-seg[data-size="lg"] .ui-seg-item { padding-inline: 1.125rem; font-size: var(--text-md); }
+  .ui-seg-item > svg { width: 1rem; height: 1rem; flex-shrink: 0; pointer-events: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-seg-item:hover:not(:disabled, [aria-checked="true"]) { color: var(--ui-foreground); }
+  }
+  .ui-seg-item[aria-checked="true"] { color: var(--ui-foreground); }
+  .ui-seg-item:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-seg-item:disabled { opacity: 0.5; cursor: not-allowed; }
+  @media (pointer: coarse) {
+    .ui-seg { --ui-seg-h-item: 2.5rem; }
+    .ui-seg[data-size="sm"] { --ui-seg-h-item: 2rem; }
+    .ui-seg[data-size="lg"] { --ui-seg-h-item: 2.75rem; }
+  }
+}

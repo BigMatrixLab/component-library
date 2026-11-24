@@ -1,0 +1,91 @@
+/* ==========================================================================
+   Tailwind bridge — semantic roles become Tailwind colours, so `bg-card`,
+   `text-muted-foreground`, `border-border`, `bg-series-1` follow the theme.
+   Also defines our type scale, radii and shadows.
+   ========================================================================== */
+
+@custom-variant dark (&:where(.dark, .dark *, [data-theme-mode="dark"], [data-theme-mode="dark"] *));
+
+@theme inline {
+  --font-sans: var(--ui-font-sans);
+  --font-display: var(--ui-font-display);
+  --font-mono: var(--ui-font-mono);
+
+  --color-background: var(--ui-background);
+  --color-foreground: var(--ui-foreground);
+  --color-card: var(--ui-surface);
+  --color-card-foreground: var(--ui-surface-foreground);
+  --color-popover: var(--ui-surface-raised);
+  --color-popover-foreground: var(--ui-surface-raised-foreground);
+  --color-muted: var(--ui-surface-muted);
+  --color-muted-foreground: var(--ui-muted-foreground);
+  --color-primary: var(--ui-primary);
+  --color-primary-foreground: var(--ui-primary-foreground);
+  --color-primary-text: var(--ui-primary-text);
+  --color-secondary: var(--ui-secondary);
+  --color-secondary-foreground: var(--ui-secondary-foreground);
+  --color-accent: var(--ui-accent);
+  --color-accent-foreground: var(--ui-accent-foreground);
+  --color-border: var(--ui-border);
+  --color-border-subtle: var(--ui-border-subtle);
+  --color-input: var(--ui-border-strong);
+  --color-ring: var(--ui-ring);
+  --color-destructive: var(--ui-destructive);
+  --color-destructive-foreground: var(--ui-destructive-foreground);
+  --color-destructive-text: var(--ui-destructive-text);
+  --color-success: var(--ui-success);
+  --color-success-foreground: var(--ui-success-foreground);
+  --color-success-text: var(--ui-success-text);
+  --color-warning: var(--ui-warning);
+  --color-warning-foreground: var(--ui-warning-foreground);
+  --color-warning-text: var(--ui-warning-text);
+  --color-info: var(--ui-info);
+  --color-info-foreground: var(--ui-info-foreground);
+  --color-info-text: var(--ui-info-text);
+  --color-series-1: var(--ui-series-1);
+  --color-series-2: var(--ui-series-2);
+  --color-series-3: var(--ui-series-3);
+  --color-series-4: var(--ui-series-4);
+  --color-series-5: var(--ui-series-5);
+  --color-series-6: var(--ui-series-6);
+  --color-sidebar: var(--ui-sidebar);
+  --color-sidebar-foreground: var(--ui-sidebar-foreground);
+  --color-sidebar-border: var(--ui-sidebar-border);
+  --color-sidebar-accent: var(--ui-sidebar-accent);
+
+  --radius-xs: max(2px, calc(var(--ui-radius) - 6px));
+  --radius-sm: max(3px, calc(var(--ui-radius) - 4px));
+  --radius-md: max(4px, calc(var(--ui-radius) - 2px));
+  --radius-lg: var(--ui-radius);
+  --radius-xl: calc(var(--ui-radius) + 4px);
+  --radius-2xl: calc(var(--ui-radius) + 8px);
+
+  --shadow-xs: var(--ui-shadow-xs);
+  --shadow-sm: var(--ui-shadow-sm);
+  --shadow-md: var(--ui-shadow-md);
+  --shadow-lg: var(--ui-shadow-lg);
+}
+
+/* Type scale: 12 / 13 / 14 / 15 / 17 / 20 / 24 / 28 / 34 / 40 */
+@theme {
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.375rem;
+  --text-md: 0.9375rem;
+  --text-md--line-height: 1.5rem;
+  --text-lg: 1.0625rem;
+  --text-lg--line-height: 1.625rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.75rem;
+  --text-3xl--line-height: 2.125rem;
+  --text-4xl: 2.125rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 2.5rem;
+  --text-5xl--line-height: 2.875rem;
+}

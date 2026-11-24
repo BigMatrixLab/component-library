@@ -1,0 +1,24 @@
+/* Context menu ------------------------------------------------------------
+   <div class="ui-context-menu-trigger" data-state="open|closed">   the area (focusable)
+   <div class="ui-floating ui-menu ui-context-menu" role="menu">    the panel at the pointer
+   The panel and every item reuse the dropdown menu's .ui-menu-* classes.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-context-menu-trigger {
+    /* no iOS callout / text selection while a long press is the right-click */
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+  .ui-context-menu-trigger:focus-visible {
+    border-radius: var(--radius-md);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent);
+  }
+  @media (pointer: coarse) {
+    .ui-context-menu-trigger { -webkit-user-select: none; user-select: none; }
+  }
+
+  /* opens at the pointer, so it grows from that corner */
+  .ui-context-menu[data-state="open"] { --ui-pop-y: 0px; }
+}

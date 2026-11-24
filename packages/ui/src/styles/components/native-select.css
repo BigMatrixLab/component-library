@@ -1,0 +1,99 @@
+/* Native select -----------------------------------------------------------
+   <div class="ui-select-wrap [ui-select-wrap-sm|lg]">
+     <select class="ui-select">…</select>
+     <svg class="ui-select-icon">chevron</svg>
+   </div>
+   Sizes live on the wrapper (variables), the select reads them.
+   States: :hover, :focus, [aria-invalid], :disabled; an empty-value first
+   option that is selected reads as a placeholder.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-select-wrap {
+    --ui-select-h: 2.25rem;
+    --ui-select-fs: var(--text-base);
+    --ui-select-px: 0.75rem;
+    --ui-select-r: var(--radius-md);
+    position: relative;
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+  .ui-select-wrap-sm { --ui-select-h: 2rem; --ui-select-fs: var(--text-sm); --ui-select-px: 0.625rem; }
+  .ui-select-wrap-lg { --ui-select-h: 2.75rem; --ui-select-fs: var(--text-md); --ui-select-px: 1rem; --ui-select-r: var(--radius-lg); }
+
+  .ui-select {
+    --ui-select-bg: var(--ui-background);
+    --ui-select-border: var(--ui-border-strong);
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: var(--ui-select-h);
+    padding-inline: var(--ui-select-px) calc(var(--ui-select-px) + 1.5rem);
+    border: 1px solid var(--ui-select-border);
+    border-radius: var(--ui-select-r);
+    background-color: var(--ui-select-bg);
+    color: var(--ui-foreground);
+    font-size: var(--ui-select-fs);
+    box-shadow: var(--ui-shadow-xs);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    text-overflow: ellipsis;
+    transition:
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      background-color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  :where(.dark, [data-theme-mode="dark"]) .ui-select {
+    --ui-select-bg: color-mix(in oklch, var(--ui-foreground) 5%, transparent);
+    box-shadow: none;
+  }
+  .ui-select option,
+  .ui-select optgroup { background-color: var(--ui-surface-raised); color: var(--ui-surface-raised-foreground); }
+
+  /* An empty-value option that is selected is the placeholder */
+  .ui-select:has(> option[value=""]:checked) { color: var(--ui-muted-foreground); }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ui-select:hover:not(:focus, :disabled, [aria-invalid="true"]) {
+      --ui-select-border: color-mix(in oklch, var(--ui-border-strong) 55%, var(--ui-foreground));
+    }
+  }
+  .ui-select:focus {
+    --ui-select-border: var(--ui-ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 25%, transparent);
+  }
+  .ui-select[aria-invalid="true"] { --ui-select-border: var(--ui-destructive); }
+  .ui-select[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-destructive) 25%, transparent); }
+  .ui-select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Chevron: decorative, the select receives every click */
+  .ui-select-icon {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: var(--ui-select-px);
+    width: 1rem;
+    height: 1rem;
+    margin-top: -0.5rem;
+    color: var(--ui-muted-foreground);
+    pointer-events: none;
+    transition: color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-select-wrap:has(.ui-select:focus) .ui-select-icon { color: var(--ui-foreground); }
+  .ui-select-wrap:has(.ui-select:disabled) .ui-select-icon { opacity: 0.5; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-select-wrap:has(.ui-select:hover:not(:disabled)) .ui-select-icon { color: var(--ui-foreground); }
+  }
+
+  /* A list box (multiple / size > 1) has no chevron and sizes to its rows */
+  .ui-select[multiple],
+  .ui-select[size]:not([size="0"], [size="1"]) { height: auto; padding-block: 0.25rem; padding-inline-end: var(--ui-select-px); }
+  .ui-select-wrap:has(.ui-select[multiple], .ui-select[size]:not([size="0"], [size="1"])) .ui-select-icon { display: none; }
+
+  /* iOS Safari zooms the page when a focused field is under 16px */
+  @media (pointer: coarse) {
+    .ui-select { font-size: 1rem; }
+  }
+}

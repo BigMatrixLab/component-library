@@ -1,0 +1,166 @@
+/* Radio group -------------------------------------------------------------
+   <div class="ui-radio-group [ui-radio-group-sm|-lg]" role="radiogroup" data-orientation data-variant>
+     <label class="ui-radio [ui-radio-card]" data-state="checked|unchecked">
+       <span class="ui-radio-control"><input class="ui-radio-input" type="radio"> <span class="ui-radio-circle"><span class="ui-radio-dot"></span></span></span>
+       <span class="ui-radio-text"><span class="ui-radio-label"> <span class="ui-radio-description">
+     </label>
+     <span class="ui-radio-ring">   (card variant only: the selection ring that glides between cards)
+   The group gets [data-glide] after its first placement; before that the ring never animates.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-radio-group {
+    --ui-box: 1.25rem;
+    --ui-box-lh: 1.375rem;
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .ui-radio-group-sm { --ui-box: 1rem; --ui-box-lh: 1.25rem; }
+  .ui-radio-group-lg { --ui-box: 1.5rem; --ui-box-lh: 1.5rem; }
+  .ui-radio-group[data-orientation="horizontal"] { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; }
+
+  .ui-radio {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    width: fit-content;
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    color: var(--ui-foreground);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ui-radio-group-sm .ui-radio { font-size: var(--text-sm); line-height: var(--text-sm--line-height); gap: 0.5rem; }
+  .ui-radio-group-lg .ui-radio { font-size: var(--text-md); line-height: var(--text-md--line-height); gap: 0.75rem; }
+
+  .ui-radio-control {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--ui-box);
+    height: var(--ui-box-lh);
+  }
+  .ui-radio-input {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: inherit;
+    appearance: none;
+  }
+  .ui-radio-circle {
+    display: grid;
+    place-items: center;
+    width: var(--ui-box);
+    height: var(--ui-box);
+    border: 1px solid var(--ui-border-strong);
+    border-radius: 9999px;
+    background-color: var(--ui-surface);
+    box-shadow: var(--ui-shadow-xs);
+    pointer-events: none;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  .ui-radio-dot {
+    width: 40%;
+    height: 40%;
+    border-radius: 9999px;
+    background-color: var(--ui-control-glyph);
+    transform: scale(0);
+    transition: transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+
+  .ui-radio-input:checked + .ui-radio-circle {
+    background-color: var(--ui-control-on);
+    border-color: var(--ui-control-on);
+    box-shadow: none;
+  }
+  .ui-radio-input:checked + .ui-radio-circle .ui-radio-dot { transform: scale(1); }
+  .ui-radio-input:active:not(:disabled) + .ui-radio-circle { transform: scale(0.92); }
+  .ui-radio-input:focus-visible + .ui-radio-circle { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ui-radio-input:hover:not(:disabled, :checked) + .ui-radio-circle { border-color: color-mix(in oklch, var(--ui-foreground) 35%, var(--ui-border-strong)); }
+    .ui-radio-input:hover:not(:disabled):checked + .ui-radio-circle { background-color: color-mix(in oklch, var(--ui-control-on) 88%, var(--ui-background)); }
+  }
+
+  /* Invalid */
+  .ui-radio-input[aria-invalid="true"] + .ui-radio-circle { border-color: var(--ui-destructive); }
+  .ui-radio-input[aria-invalid="true"]:checked + .ui-radio-circle { background-color: var(--ui-destructive); }
+  .ui-radio-input[aria-invalid="true"]:checked + .ui-radio-circle .ui-radio-dot { background-color: var(--ui-destructive-foreground); }
+  .ui-radio-input[aria-invalid="true"]:focus-visible + .ui-radio-circle { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-destructive) 35%, transparent); }
+
+  /* Text */
+  .ui-radio-text { display: grid; gap: 0.125rem; min-width: 0; user-select: none; }
+  .ui-radio-label { font-weight: 500; }
+  .ui-radio-description { color: var(--ui-muted-foreground); font-size: var(--text-sm); line-height: var(--text-sm--line-height); }
+
+  /* Disabled */
+  .ui-radio[data-disabled] { cursor: not-allowed; }
+  .ui-radio[data-disabled] .ui-radio-circle,
+  .ui-radio[data-disabled] .ui-radio-text { opacity: 0.5; }
+  .ui-radio[data-disabled] .ui-radio-circle { box-shadow: none; }
+
+  /* Cards */
+  .ui-radio-group[data-variant="card"] { gap: 0.5rem; }
+  .ui-radio-group[data-variant="card"][data-orientation="horizontal"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    gap: 0.75rem;
+  }
+  .ui-radio-card {
+    width: auto;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--ui-surface);
+    transition: background-color var(--ui-duration) var(--ui-ease-standard), border-color var(--ui-duration) var(--ui-ease-standard);
+  }
+  .ui-radio-card .ui-radio-text { flex: 1; }
+  .ui-radio-card:has(.ui-radio-input:focus-visible) { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-radio-card .ui-radio-input:focus-visible + .ui-radio-circle { box-shadow: none; }
+  .ui-radio-card[data-disabled] { cursor: not-allowed; }
+  .ui-radio-card[data-disabled] .ui-radio-circle,
+  .ui-radio-card[data-disabled] .ui-radio-text { opacity: 0.5; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-radio-card:hover:not([data-disabled], [data-state="checked"]) { background-color: var(--ui-accent); }
+  }
+  /* Before the ring exists (SSR, first paint) the checked card carries the highlight itself */
+  .ui-radio-group:not([data-glide]) .ui-radio-card[data-state="checked"] {
+    border-color: var(--ui-control-on);
+    box-shadow: inset 0 0 0 1px var(--ui-control-on);
+  }
+  .ui-radio-card[data-state="checked"] { background-color: color-mix(in oklch, var(--ui-control-on) 6%, var(--ui-surface)); }
+
+  /* The gliding selection ring: one element measured to the checked card */
+  .ui-radio-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border: 1px solid var(--ui-control-on);
+    border-radius: var(--radius-lg);
+    box-shadow: inset 0 0 0 1px var(--ui-control-on);
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform;
+  }
+  .ui-radio-group[data-glide] .ui-radio-ring {
+    transition:
+      transform var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      width var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      height var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      opacity var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+}

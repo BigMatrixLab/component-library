@@ -1,0 +1,128 @@
+/* ==========================================================================
+   Layer 2 — semantic roles. The only tokens components read.
+   Light is the default; dark is `.dark` (or data-theme-mode="dark") on <html>.
+   Theme packs (Phase 4) override this map, never the components.
+   ========================================================================== */
+
+:root {
+  --ui-radius: 0.625rem;
+
+  /* Surfaces */
+  --ui-background: var(--ui-gray-0);
+  --ui-foreground: var(--ui-gray-950);
+  --ui-surface: var(--ui-gray-0);              /* cards */
+  --ui-surface-foreground: var(--ui-gray-950);
+  --ui-surface-raised: var(--ui-gray-0);       /* popovers, menus, dialogs */
+  --ui-surface-raised-foreground: var(--ui-gray-950);
+  --ui-surface-muted: var(--ui-gray-100);      /* wells, table headers, muted fills */
+  --ui-muted-foreground: var(--ui-gray-500);
+
+  /* Interactive fills */
+  --ui-primary: var(--ui-gray-900);
+  --ui-primary-foreground: var(--ui-gray-50);
+  --ui-secondary: var(--ui-gray-100);
+  --ui-secondary-foreground: var(--ui-gray-900);
+  --ui-accent: var(--ui-gray-100);             /* hover / highlighted item */
+  --ui-accent-foreground: var(--ui-gray-900);
+
+  /* Lines */
+  --ui-border: var(--ui-gray-200);
+  --ui-border-subtle: var(--ui-gray-150);
+  --ui-border-strong: var(--ui-gray-300);      /* inputs */
+  --ui-ring: var(--ui-gray-400);
+
+  /* Selection controls (switch, checkbox, radio, slider) */
+  --ui-control-on: var(--ui-primary);
+  --ui-control-glyph: var(--ui-primary-foreground);
+  --ui-control-track: var(--ui-gray-200);
+  --ui-control-thumb: var(--ui-gray-0);
+
+  /* Text in the brand colour (links, soft buttons, active items) */
+  --ui-primary-text: var(--ui-gray-900);
+
+  /* Status: fill (+ foreground on top of it) and text (on surfaces) */
+  --ui-destructive: var(--ui-red-600);
+  --ui-destructive-foreground: var(--ui-gray-0);
+  --ui-destructive-text: var(--ui-red-700);
+  --ui-success: var(--ui-green-600);
+  --ui-success-foreground: var(--ui-gray-0);
+  --ui-success-text: var(--ui-green-700);
+  --ui-warning: var(--ui-amber-500);
+  --ui-warning-foreground: var(--ui-gray-900);
+  --ui-warning-text: var(--ui-amber-700);
+  --ui-info: var(--ui-blue-600);
+  --ui-info-foreground: var(--ui-gray-0);
+  --ui-info-text: var(--ui-blue-700);
+
+  /* Data series */
+  --ui-series-1: var(--ui-series-indigo);
+  --ui-series-2: var(--ui-series-teal);
+  --ui-series-3: var(--ui-series-amber);
+  --ui-series-4: var(--ui-series-pink);
+  --ui-series-5: var(--ui-series-sky);
+  --ui-series-6: var(--ui-series-lime);
+
+  /* App chrome */
+  --ui-sidebar: var(--ui-gray-50);
+  --ui-sidebar-foreground: var(--ui-gray-950);
+  --ui-sidebar-border: var(--ui-gray-200);
+  --ui-sidebar-accent: var(--ui-gray-150);
+
+  /* Elevation — only floating layers get shadows */
+  --ui-shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.05);
+  --ui-shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.04), 0 1px 3px 0 oklch(0 0 0 / 0.06);
+  --ui-shadow-md: 0 2px 4px -1px oklch(0 0 0 / 0.05), 0 6px 16px -4px oklch(0 0 0 / 0.08);
+  --ui-shadow-lg: 0 4px 8px -2px oklch(0 0 0 / 0.05), 0 16px 40px -8px oklch(0 0 0 / 0.14);
+  --ui-overlay: oklch(0.15 0.01 286 / 0.45);
+
+  color-scheme: light;
+}
+
+.dark,
+[data-theme-mode="dark"] {
+  --ui-background: var(--ui-gray-950);
+  --ui-foreground: var(--ui-gray-50);
+  --ui-surface: var(--ui-gray-925);
+  --ui-surface-foreground: var(--ui-gray-50);
+  --ui-surface-raised: var(--ui-gray-900);
+  --ui-surface-raised-foreground: var(--ui-gray-50);
+  --ui-surface-muted: var(--ui-gray-850);
+  --ui-muted-foreground: var(--ui-gray-400);
+
+  --ui-primary: var(--ui-gray-200);
+  --ui-primary-foreground: var(--ui-gray-900);
+  --ui-secondary: var(--ui-gray-800);
+  --ui-secondary-foreground: var(--ui-gray-50);
+  --ui-accent: var(--ui-gray-800);
+  --ui-accent-foreground: var(--ui-gray-50);
+
+  --ui-border: oklch(1 0 0 / 0.1);
+  --ui-border-subtle: oklch(1 0 0 / 0.06);
+  --ui-border-strong: oklch(1 0 0 / 0.15);
+  --ui-ring: var(--ui-gray-500);
+
+  --ui-control-track: var(--ui-gray-700);
+  --ui-control-thumb: var(--ui-gray-0);
+
+  --ui-primary-text: var(--ui-gray-200);
+
+  /* Fills stay at the -600 step (white text passes); text moves to -300 */
+  --ui-destructive-text: var(--ui-red-300);
+  --ui-success-text: var(--ui-green-300);
+  --ui-warning: var(--ui-amber-300);
+  --ui-warning-text: var(--ui-amber-300);
+  --ui-info-text: var(--ui-blue-300);
+
+  --ui-sidebar: var(--ui-gray-950);
+  --ui-sidebar-foreground: var(--ui-gray-50);
+  --ui-sidebar-border: oklch(1 0 0 / 0.08);
+  --ui-sidebar-accent: var(--ui-gray-850);
+
+  --ui-shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.3);
+  --ui-shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.3), 0 1px 3px 0 oklch(0 0 0 / 0.3);
+  --ui-shadow-md: 0 2px 4px -1px oklch(0 0 0 / 0.3), 0 6px 16px -4px oklch(0 0 0 / 0.45);
+  --ui-shadow-lg: 0 0 0 1px oklch(1 0 0 / 0.06), 0 4px 8px -2px oklch(0 0 0 / 0.35), 0 16px 40px -8px oklch(0 0 0 / 0.6);
+  --ui-overlay: oklch(0 0 0 / 0.6);
+
+  color-scheme: dark;
+}

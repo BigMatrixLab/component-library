@@ -1,0 +1,147 @@
+/* Slider ------------------------------------------------------------------
+   <div class="ui-slider" data-orientation="horizontal|vertical" [data-disabled] [data-dragging] data-tooltip="auto|always|never">
+     <div class="ui-slider-track"><div class="ui-slider-range" style="--ui-p-start; --ui-p-end"></div></div>
+     <div class="ui-slider-thumb" role="slider" style="--ui-p: 0–1" [data-dragging]>
+       <span class="ui-slider-tooltip">
+   The thumb centre travels (length − thumb); --ui-p is its 0–1 position on that span.
+   Position is set with layout (not animated) so thumbs track the pointer exactly.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-slider {
+    --ui-thumb: 1.25rem;
+    --ui-rail: 0.375rem;
+    position: relative;
+    display: block;
+    width: 100%;
+    height: var(--ui-thumb);
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+  }
+  .ui-slider[data-orientation="vertical"] {
+    width: var(--ui-thumb);
+    height: 12rem;
+    touch-action: pan-x;
+  }
+
+  .ui-slider-track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: var(--ui-rail);
+    translate: 0 -50%;
+    border-radius: 9999px;
+    background-color: var(--ui-control-track);
+    overflow: hidden;
+  }
+  .ui-slider[data-orientation="vertical"] .ui-slider-track {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: auto;
+    width: var(--ui-rail);
+    height: auto;
+    translate: -50% 0;
+  }
+  .ui-slider-range {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: calc(var(--ui-thumb) / 2 + (100% - var(--ui-thumb)) * var(--ui-p-start, 0));
+    inset-inline-end: calc(var(--ui-thumb) / 2 + (100% - var(--ui-thumb)) * (1 - var(--ui-p-end, 0)));
+    background-color: var(--ui-control-on);
+  }
+  .ui-slider[data-orientation="vertical"] .ui-slider-range {
+    inset-inline: 0;
+    inset-block-start: auto;
+    inset-block-end: auto;
+    bottom: calc(var(--ui-thumb) / 2 + (100% - var(--ui-thumb)) * var(--ui-p-start, 0));
+    top: calc(var(--ui-thumb) / 2 + (100% - var(--ui-thumb)) * (1 - var(--ui-p-end, 0)));
+  }
+
+  .ui-slider-range[data-single] { inset-inline-start: 0; }
+  .ui-slider[data-orientation="vertical"] .ui-slider-range[data-single] { bottom: 0; }
+
+  .ui-slider-thumb {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--ui-thumb) / 2 + (100% - var(--ui-thumb)) * var(--ui-p, 0));
+    width: var(--ui-thumb);
+    height: var(--ui-thumb);
+    translate: -50% -50%;
+    scale: 1;
+    border: 2px solid var(--ui-control-on);
+    border-radius: 9999px;
+    background-color: var(--ui-control-thumb);
+    box-shadow: var(--ui-shadow-xs);
+    outline: none;
+    cursor: grab;
+    transition:
+      scale var(--ui-spring-snappy-duration) var(--ui-spring-snappy),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-slider[data-orientation="vertical"] .ui-slider-thumb {
+    top: auto;
+    left: 50%;
+    bottom: calc(var(--ui-thumb) / 2 + (100% - var(--ui-thumb)) * var(--ui-p, 0));
+    translate: -50% 50%;
+  }
+  .ui-slider-thumb[data-dragging] { scale: 1.12; cursor: grabbing; }
+  .ui-slider-thumb:focus-visible { box-shadow: 0 0 0 4px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-slider-thumb:hover:not([data-dragging]) { scale: 1.06; }
+  }
+
+  /* Value bubble */
+  .ui-slider-tooltip {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 50%;
+    translate: -50% 4px;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--ui-primary);
+    color: var(--ui-primary-foreground);
+    font-size: var(--text-xs);
+    line-height: 1rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    opacity: 0;
+    filter: blur(var(--ui-blur-subtle));
+    pointer-events: none;
+    transition:
+      opacity var(--ui-duration-fast) var(--ui-ease-in),
+      translate var(--ui-duration-fast) var(--ui-ease-in),
+      filter var(--ui-duration-fast) var(--ui-ease-in);
+  }
+  .ui-slider[data-orientation="vertical"] .ui-slider-tooltip {
+    bottom: auto;
+    left: calc(100% + 0.5rem);
+    top: 50%;
+    translate: -4px -50%;
+  }
+  .ui-slider-thumb:focus-visible .ui-slider-tooltip,
+  .ui-slider-thumb[data-dragging] .ui-slider-tooltip,
+  .ui-slider[data-tooltip="always"] .ui-slider-tooltip {
+    opacity: 1;
+    translate: -50% 0;
+    filter: none;
+    transition-duration: var(--ui-duration);
+    transition-timing-function: var(--ui-ease-out);
+  }
+  .ui-slider[data-orientation="vertical"] .ui-slider-thumb:focus-visible .ui-slider-tooltip,
+  .ui-slider[data-orientation="vertical"] .ui-slider-thumb[data-dragging] .ui-slider-tooltip,
+  .ui-slider[data-orientation="vertical"][data-tooltip="always"] .ui-slider-tooltip { translate: 0 -50%; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-slider[data-tooltip="auto"] .ui-slider-thumb:hover .ui-slider-tooltip { opacity: 1; translate: -50% 0; filter: none; }
+    .ui-slider[data-orientation="vertical"][data-tooltip="auto"] .ui-slider-thumb:hover .ui-slider-tooltip { translate: 0 -50%; }
+  }
+
+  /* Disabled */
+  .ui-slider[data-disabled] { opacity: 0.5; cursor: not-allowed; }
+  .ui-slider[data-disabled] .ui-slider-thumb { cursor: not-allowed; }
+}

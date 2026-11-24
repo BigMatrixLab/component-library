@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@import "ui-kit/kit.css";
+
+/* Docs pages, examples and the docs chrome */
+@source "../app";
+@source "../components";
+@source "../examples";
+
+@layer base {
+  html { scroll-padding-top: 5rem; }
+}
+
+/* Shiki: light/dark token colours as CSS variables */
+.docs-code pre { background: transparent !important; font-family: var(--ui-font-mono); line-height: 1.7; }
+.docs-code .shiki span { color: var(--shiki-light); }
+.dark .docs-code .shiki span { color: var(--shiki-dark); }

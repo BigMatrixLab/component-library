@@ -1,0 +1,60 @@
+/* Popover -----------------------------------------------------------------
+   <div class="ui-floating ui-popover" popover="manual" data-state data-side data-align>
+     optional <span class="ui-floating-arrow">
+   .ui-floating is the shared base for every top-layer panel (tooltip, popover,
+   menu): it only positions; useFloating writes left/top, data-side, --ui-origin.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-floating {
+    position: fixed;
+    inset: auto;
+    left: 0;
+    top: 0;
+    margin: 0;
+    transform-origin: var(--ui-origin, center);
+    /* entrances start a few px toward the anchor */
+    --ui-pop-y: 0px;
+  }
+  .ui-floating[data-side="bottom"] { --ui-pop-y: -4px; }
+  .ui-floating[data-side="top"] { --ui-pop-y: 4px; }
+
+  .ui-popover {
+    width: 18rem;
+    max-width: calc(100vw - 1rem);
+    padding: 1rem;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background: var(--ui-surface-raised);
+    color: var(--ui-surface-raised-foreground);
+    box-shadow: var(--ui-shadow-lg);
+    font-size: var(--text-base);
+    outline: none;
+  }
+  .ui-popover[data-state="open"] { animation: ui-pop-in var(--ui-duration) var(--ui-ease-out) both; }
+  .ui-popover[data-state="closed"] { animation: ui-pop-out var(--ui-duration-exit) var(--ui-ease-in) both; pointer-events: none; }
+
+  .ui-floating-arrow {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--ui-surface-raised);
+    pointer-events: none;
+  }
+  .ui-floating[data-side="bottom"] > .ui-floating-arrow {
+    top: -6px; left: var(--ui-arrow-offset, 50%); transform: translateX(-50%) rotate(45deg);
+    border-top: 1px solid var(--ui-border); border-left: 1px solid var(--ui-border);
+  }
+  .ui-floating[data-side="top"] > .ui-floating-arrow {
+    bottom: -6px; left: var(--ui-arrow-offset, 50%); transform: translateX(-50%) rotate(45deg);
+    border-bottom: 1px solid var(--ui-border); border-right: 1px solid var(--ui-border);
+  }
+  .ui-floating[data-side="right"] > .ui-floating-arrow {
+    left: -6px; top: var(--ui-arrow-offset, 50%); transform: translateY(-50%) rotate(45deg);
+    border-bottom: 1px solid var(--ui-border); border-left: 1px solid var(--ui-border);
+  }
+  .ui-floating[data-side="left"] > .ui-floating-arrow {
+    right: -6px; top: var(--ui-arrow-offset, 50%); transform: translateY(-50%) rotate(45deg);
+    border-top: 1px solid var(--ui-border); border-right: 1px solid var(--ui-border);
+  }
+}

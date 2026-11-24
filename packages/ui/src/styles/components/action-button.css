@@ -1,0 +1,100 @@
+/* Action button ------------------------------------------------------------
+   <button class="ui-btn … ui-action-btn" data-state="idle|pending|success|error">
+     <span class="ui-action-btn-leaving ui-action-btn-layer" aria-hidden>…</span>   (previous label, fading out)
+     <span class="ui-action-btn-layer" data-enter>…</span>                          (current label, in flow)
+   </button>
+   <span class="ui-action-btn-live" role="status">…</span>
+
+   Also hosts the glyphs the morphing buttons share: ui-glyph-spinner / -check / -cross.
+   The width spring is driven from JS (useMorphWidth) — the button keeps width:auto.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-action-btn { overflow: hidden; }
+
+  .ui-action-btn-layer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+  }
+  .ui-action-btn-layer > svg,
+  .ui-action-btn-layer > .ui-icon { width: 1rem; height: 1rem; flex-shrink: 0; }
+  .ui-action-btn-layer[data-enter] { animation: ui-action-label-in var(--ui-duration) var(--ui-ease-out) both; }
+
+  /* The label that is leaving sits on top of the new one, centred in the button */
+  .ui-action-btn-leaving {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    animation: ui-action-label-out var(--ui-duration-exit) var(--ui-ease-in) both;
+  }
+
+  /* Result colours: the same shape, a different intent */
+  .ui-action-btn.ui-btn[data-state="success"],
+  .ui-action-btn.ui-btn[data-state="success"]:hover {
+    background-color: var(--ui-success);
+    border-color: transparent;
+    --ui-btn-fg: var(--ui-success-foreground);
+  }
+  .ui-action-btn.ui-btn[data-state="error"],
+  .ui-action-btn.ui-btn[data-state="error"]:hover {
+    background-color: var(--ui-destructive);
+    border-color: transparent;
+    --ui-btn-fg: var(--ui-destructive-foreground);
+  }
+
+  /* Pending keeps the label visible (the Button's own loading style would hide it) */
+  .ui-action-btn.ui-btn[aria-busy="true"] { color: var(--ui-btn-fg); cursor: progress; }
+  .ui-action-btn.ui-btn[aria-busy="true"] > .ui-action-btn-layer { visibility: visible; }
+
+  /* Screen-reader announcement */
+  .ui-action-btn-live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Shared glyphs ------------------------------------------------------- */
+  .ui-glyph-spinner {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 9999px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    animation: ui-spin 0.7s linear infinite;
+  }
+  .ui-glyph-check path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    animation: ui-draw 320ms var(--ui-ease-out) 60ms both;
+    --ui-dash: 1;
+  }
+  .ui-glyph-cross { animation: ui-pop-in var(--ui-duration) var(--ui-ease-out) both; }
+}
+
+/* Entering: rises 4px, a 2px blur clears. Leaving: lifts away, blurs. */
+@keyframes ui-action-label-in {
+  from { opacity: 0; transform: translateY(4px); filter: blur(var(--ui-blur-subtle)); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes ui-action-label-out {
+  from { opacity: 1; transform: none; filter: none; }
+  to { opacity: 0; transform: translateY(-4px); filter: blur(var(--ui-blur-subtle)); }
+}
+
+/* Reduced motion: the label swaps and the colour changes; nothing moves or blurs */
+@media (prefers-reduced-motion: reduce) {
+  .ui-action-btn-layer[data-enter] { animation: ui-fade-in 1ms both; }
+  .ui-glyph-check path { animation: none; }
+  .ui-glyph-cross { animation: none; }
+}

@@ -1,0 +1,189 @@
+/* Input -------------------------------------------------------------------
+   <input class="ui-input">                         sizes: -sm (32) | (36) | -lg (44)
+   Input group: one bordered field holding the input plus icons / addons / actions
+   <div class="ui-input-group [ui-input-group-sm|lg]">
+     <span class="ui-input-icon">…svg…</span>
+     <span class="ui-input-addon">https://</span>
+     <input class="ui-input">
+     <span class="ui-input-addon">.com</span>
+     <button class="ui-input-action" aria-label="Clear">…svg…</button>
+   </div>
+   States: :hover, :focus, [aria-invalid="true"], :disabled, [readonly]
+   Sizes are CSS variables (--ui-input-h / -fs / -px / -r) that an input
+   inherits from its group.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-input,
+  .ui-input-group {
+    --ui-input-bg: var(--ui-background);
+    --ui-input-border: var(--ui-border-strong);
+  }
+  :where(.dark, [data-theme-mode="dark"]) .ui-input,
+  :where(.dark, [data-theme-mode="dark"]) .ui-input-group {
+    --ui-input-bg: color-mix(in oklch, var(--ui-foreground) 5%, transparent);
+  }
+
+  /* The bordered surface: a bare input, or the group around one */
+  .ui-input,
+  .ui-input-group {
+    width: 100%;
+    min-width: 0;
+    height: var(--ui-input-h, 2.25rem);
+    border: 1px solid var(--ui-input-border);
+    border-radius: var(--ui-input-r, var(--radius-md));
+    background-color: var(--ui-input-bg);
+    color: var(--ui-foreground);
+    font-size: var(--ui-input-fs, var(--text-base));
+    box-shadow: var(--ui-shadow-xs);
+    transition:
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      background-color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  :where(.dark, [data-theme-mode="dark"]) .ui-input,
+  :where(.dark, [data-theme-mode="dark"]) .ui-input-group { box-shadow: none; }
+
+  .ui-input {
+    display: block;
+    padding-inline: var(--ui-input-px, 0.75rem);
+    outline: none;
+  }
+  .ui-input::placeholder { color: var(--ui-muted-foreground); opacity: 1; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ui-input:hover:not(:focus, :disabled, [aria-invalid="true"], [readonly]),
+    .ui-input-group:hover:not(:focus-within, [aria-invalid="true"]):not(:has(> .ui-input:disabled, > .ui-input[aria-invalid="true"], > .ui-input[readonly])) {
+      --ui-input-border: color-mix(in oklch, var(--ui-border-strong) 55%, var(--ui-foreground));
+    }
+  }
+
+  .ui-input:focus,
+  .ui-input-group:has(> .ui-input:focus) {
+    --ui-input-border: var(--ui-ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 25%, transparent);
+  }
+
+  .ui-input[aria-invalid="true"],
+  .ui-input-group:has(> .ui-input[aria-invalid="true"]) { --ui-input-border: var(--ui-destructive); }
+  .ui-input[aria-invalid="true"]:focus,
+  .ui-input-group:has(> .ui-input[aria-invalid="true"]:focus) {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-destructive) 25%, transparent);
+  }
+
+  .ui-input:disabled,
+  .ui-input-group:has(> .ui-input:disabled) { opacity: 0.5; cursor: not-allowed; }
+  .ui-input[readonly],
+  .ui-input-group:has(> .ui-input[readonly]) { --ui-input-bg: color-mix(in oklch, var(--ui-surface-muted) 60%, transparent); }
+
+  .ui-input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+  .ui-input[type="file"] { padding-block: 0.25rem; padding-inline-start: 0.25rem; color: var(--ui-muted-foreground); line-height: 1.75rem; }
+  .ui-input[type="file"]::file-selector-button {
+    height: 1.75rem;
+    margin-inline-end: 0.75rem;
+    padding-inline: 0.625rem;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background-color: var(--ui-secondary);
+    color: var(--ui-secondary-foreground);
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  /* Sizes */
+  .ui-input-sm,
+  .ui-input-group-sm { --ui-input-h: 2rem; --ui-input-fs: var(--text-sm); --ui-input-px: 0.625rem; }
+  .ui-input-lg,
+  .ui-input-group-lg { --ui-input-h: 2.75rem; --ui-input-fs: var(--text-md); --ui-input-px: 1rem; --ui-input-r: var(--radius-lg); }
+
+  /* ---- Group ---------------------------------------------------------- */
+  .ui-input-group {
+    display: flex;
+    align-items: center;
+    overflow: visible;
+    cursor: text;
+  }
+  /* The input loses its own surface: the group draws it */
+  .ui-input-group > .ui-input {
+    flex: 1 1 0%;
+    height: 100%;
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    box-shadow: none;
+    font-size: inherit;
+  }
+  .ui-input-group > .ui-input:is(:focus, :disabled, [aria-invalid="true"]) { box-shadow: none; }
+  .ui-input-group > .ui-input:disabled { opacity: 1; }
+
+  /* Leading / trailing icons */
+  .ui-input-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--ui-input-px, 0.75rem) 0;
+    color: var(--ui-muted-foreground);
+    pointer-events: none;
+  }
+  .ui-input-icon > svg { width: 1rem; height: 1rem; }
+  .ui-input-icon:first-child + .ui-input { padding-inline-start: 0.5rem; }
+  .ui-input + .ui-input-icon { padding-inline: 0 var(--ui-input-px, 0.75rem); }
+  .ui-input:has(+ .ui-input-icon, + .ui-input-action, + .ui-input-addon) { padding-inline-end: 0.5rem; }
+
+  /* Attached addons: "https://", ".com" */
+  .ui-input-addon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    align-self: stretch;
+    padding-inline: var(--ui-input-px, 0.75rem);
+    background-color: var(--ui-surface-muted);
+    color: var(--ui-muted-foreground);
+    white-space: nowrap;
+    user-select: none;
+  }
+  .ui-input-addon:has(~ .ui-input) { border-inline-end: 1px solid var(--ui-input-border); }
+  .ui-input ~ .ui-input-addon { border-inline-start: 1px solid var(--ui-input-border); }
+  .ui-input-addon:first-child { border-start-start-radius: calc(var(--ui-input-r, var(--radius-md)) - 1px); border-end-start-radius: calc(var(--ui-input-r, var(--radius-md)) - 1px); }
+  .ui-input-addon:last-child { border-start-end-radius: calc(var(--ui-input-r, var(--radius-md)) - 1px); border-end-end-radius: calc(var(--ui-input-r, var(--radius-md)) - 1px); }
+
+  /* Icon button inside the field */
+  .ui-input-action {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--ui-input-h, 2.25rem) - 0.5rem - 2px);
+    height: calc(var(--ui-input-h, 2.25rem) - 0.5rem - 2px);
+    margin-inline-end: 0.25rem;
+    border: 0;
+    border-radius: calc(var(--ui-input-r, var(--radius-md)) - 2px);
+    background: transparent;
+    color: var(--ui-muted-foreground);
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  .ui-input-action > svg { width: 1rem; height: 1rem; pointer-events: none; }
+  .ui-input-action:active:not(:disabled) { transform: scale(0.94); }
+  .ui-input-action:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-input-action:disabled { cursor: not-allowed; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-input-action:hover:not(:disabled) { background-color: var(--ui-accent); color: var(--ui-accent-foreground); }
+  }
+  .ui-input-action[aria-pressed="true"] { color: var(--ui-foreground); }
+  .ui-input-action[hidden] { display: none; }
+
+  /* iOS Safari zooms the page when a focused field is under 16px */
+  @media (pointer: coarse) {
+    .ui-input,
+    .ui-input-group { font-size: 1rem; }
+  }
+}

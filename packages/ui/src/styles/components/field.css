@@ -1,0 +1,95 @@
+/* Field & label -----------------------------------------------------------
+   <div class="ui-field [ui-field-horizontal]">
+     <label class="ui-label" data-required>Email</label>
+     <input class="ui-input">
+     <p class="ui-field-hint">…</p>
+     <p class="ui-field-error"><svg/><span>…</span></p>
+   </div>
+   <fieldset class="ui-fieldset"><legend class="ui-legend">…</legend>…</fieldset>
+   <form class="ui-form">  grid with a 20px gap between fields
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-field {
+    display: grid;
+    gap: 0.375rem;
+    min-width: 0;
+    align-content: start;
+  }
+
+  .ui-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    width: fit-content;
+    color: var(--ui-foreground);
+    font-size: var(--text-base);
+    line-height: 1.25rem;
+    font-weight: 500;
+  }
+  .ui-label[data-disabled] { opacity: 0.5; }
+  /* The required marker is generated content: it stays out of the label text */
+  .ui-label[data-required]::after {
+    content: "*";
+    content: "*" / "";
+    color: var(--ui-destructive-text);
+  }
+
+  .ui-field-hint {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-sm);
+    line-height: 1.25rem;
+  }
+
+  .ui-field-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.375rem;
+    margin: 0;
+    color: var(--ui-destructive-text);
+    font-size: var(--text-sm);
+    line-height: 1.25rem;
+    animation: ui-rise-in var(--ui-duration) var(--ui-ease-out) both;
+  }
+  .ui-field-error > svg { flex-shrink: 0; width: 0.875rem; height: 0.875rem; margin-top: 0.1875rem; }
+
+  /* Horizontal: label in a left column, control and messages in the right */
+  .ui-field-horizontal {
+    --ui-field-label-width: 11rem;
+    grid-template-columns: minmax(0, var(--ui-field-label-width)) minmax(0, 1fr);
+    column-gap: 1rem;
+    row-gap: 0.375rem;
+  }
+  .ui-field-horizontal > .ui-label { grid-column: 1; grid-row: 1; min-height: 2.25rem; width: auto; }
+  .ui-field-horizontal > :not(.ui-label) { grid-column: 2; }
+  @media (max-width: 39.99rem) {
+    .ui-field-horizontal { grid-template-columns: minmax(0, 1fr); }
+    .ui-field-horizontal > .ui-label { grid-column: 1; grid-row: auto; min-height: 0; width: fit-content; }
+    .ui-field-horizontal > :not(.ui-label) { grid-column: 1; }
+  }
+
+  .ui-fieldset {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .ui-legend {
+    margin: 0 0 1rem;
+    padding: 0;
+    color: var(--ui-foreground);
+    font-size: var(--text-md);
+    line-height: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+
+  .ui-form {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+}

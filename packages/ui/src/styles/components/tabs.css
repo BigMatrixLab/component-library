@@ -1,0 +1,139 @@
+/* Tabs --------------------------------------------------------------------
+   <div class="ui-tabs" data-variant="segmented|underline|pills" data-orientation>
+     <div class="ui-tabs-list" role="tablist">          scrolls when it overflows
+       <button class="ui-tabs-trigger" role="tab" aria-selected>
+       <span class="ui-tabs-indicator">                 ONE element, glides between triggers
+     <div class="ui-tabs-content" role="tabpanel">
+   JS writes --ui-tab-x/y/w/h on the list; data-ready appears after the first
+   measurement and data-animate two frames later (first placement never animates).
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-tabs { display: flex; flex-direction: column; gap: 1rem; }
+  .ui-tabs[data-orientation="vertical"] { flex-direction: row; align-items: flex-start; gap: 1.5rem; }
+
+  .ui-tabs-list {
+    position: relative;
+    display: flex;
+    flex: none;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ui-tabs-list::-webkit-scrollbar { display: none; }
+  .ui-tabs-list[data-orientation="vertical"] { flex-direction: column; overflow: visible; max-width: none; }
+
+  .ui-tabs-trigger {
+    position: relative;
+    z-index: 1;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    font-size: var(--text-base);
+    font-weight: 500;
+    line-height: 1.25rem;
+    color: var(--ui-muted-foreground);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--ui-duration-fast) var(--ui-ease-standard), background-color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-tabs-trigger[aria-selected="true"] { color: var(--ui-foreground); }
+  .ui-tabs-trigger:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ui-tabs-trigger:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-tabs-trigger:not(:disabled):hover { color: var(--ui-foreground); }
+  }
+
+  /* The one indicator */
+  .ui-tabs-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+    width: var(--ui-tab-w, 0px);
+    height: var(--ui-tab-h, 0px);
+    transform: translate(var(--ui-tab-x, 0px), var(--ui-tab-y, 0px));
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ui-tabs-list[data-ready] .ui-tabs-indicator { opacity: 1; }
+  .ui-tabs-list[data-animate] .ui-tabs-indicator {
+    transition: transform var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      width var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      height var(--ui-spring-morph-duration) var(--ui-spring-morph);
+  }
+
+  /* ---- segmented: raised pill on a muted track ---- */
+  .ui-tabs-list[data-variant="segmented"] {
+    gap: 2px;
+    padding: 3px;
+    border-radius: var(--radius-lg);
+    background: var(--ui-surface-muted);
+  }
+  .ui-tabs-list[data-variant="segmented"][data-orientation="vertical"] { width: 12rem; max-width: 100%; }
+  .ui-tabs-list[data-variant="segmented"] .ui-tabs-trigger { height: 1.875rem; padding-inline: 0.875rem; border-radius: var(--radius-md); }
+  .ui-tabs-list[data-variant="segmented"][data-orientation="vertical"] .ui-tabs-trigger { justify-content: flex-start; }
+  .ui-tabs-list[data-variant="segmented"] .ui-tabs-indicator {
+    border-radius: var(--radius-md);
+    background: var(--ui-surface-raised);
+    box-shadow: var(--ui-shadow-sm), 0 0 0 1px var(--ui-border-subtle);
+  }
+  .dark .ui-tabs-list[data-variant="segmented"] .ui-tabs-indicator,
+  [data-theme-mode="dark"] .ui-tabs-list[data-variant="segmented"] .ui-tabs-indicator { background: color-mix(in oklch, var(--ui-foreground) 14%, var(--ui-surface-muted)); }
+
+  /* ---- underline: a bar under (or beside) the active tab ---- */
+  .ui-tabs-list[data-variant="underline"] { gap: 0.25rem; box-shadow: inset 0 -1px 0 var(--ui-border); }
+  .ui-tabs-list[data-variant="underline"][data-orientation="vertical"] { gap: 0; box-shadow: inset -1px 0 0 var(--ui-border); min-width: 10rem; }
+  .ui-tabs-list[data-variant="underline"] .ui-tabs-trigger { height: 2.5rem; padding-inline: 0.75rem; border-radius: var(--radius-md) var(--radius-md) 0 0; }
+  .ui-tabs-list[data-variant="underline"][data-orientation="vertical"] .ui-tabs-trigger { justify-content: flex-start; padding-inline-end: 1.25rem; border-radius: var(--radius-md) 0 0 var(--radius-md); }
+  .ui-tabs-list[data-variant="underline"] .ui-tabs-indicator {
+    height: 2px;
+    transform: translate(var(--ui-tab-x, 0px), calc(var(--ui-tab-y, 0px) + var(--ui-tab-h, 0px) - 2px));
+    border-radius: 2px 2px 0 0;
+    background: var(--ui-primary);
+  }
+  .ui-tabs-list[data-variant="underline"][data-orientation="vertical"] .ui-tabs-indicator {
+    width: 2px;
+    height: var(--ui-tab-h, 0px);
+    transform: translate(calc(var(--ui-tab-x, 0px) + var(--ui-tab-w, 0px) - 2px), var(--ui-tab-y, 0px));
+    border-radius: 2px 0 0 2px;
+  }
+  .ui-tabs-list[data-animate][data-variant="underline"] .ui-tabs-indicator {
+    transition: transform var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      width var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      height var(--ui-spring-morph-duration) var(--ui-spring-morph);
+  }
+
+  /* ---- pills: a soft fill behind the active tab, no track ---- */
+  .ui-tabs-list[data-variant="pills"] { gap: 0.25rem; }
+  .ui-tabs-list[data-variant="pills"] .ui-tabs-trigger { height: 2rem; padding-inline: 0.875rem; border-radius: 999px; }
+  .ui-tabs-list[data-variant="pills"][data-orientation="vertical"] { min-width: 10rem; }
+  .ui-tabs-list[data-variant="pills"][data-orientation="vertical"] .ui-tabs-trigger { justify-content: flex-start; }
+  .ui-tabs-list[data-variant="pills"] .ui-tabs-indicator { border-radius: 999px; background: var(--ui-accent); }
+  .ui-tabs-list[data-variant="pills"] .ui-tabs-trigger[aria-selected="true"] { color: var(--ui-accent-foreground); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-tabs-list[data-variant="pills"] .ui-tabs-trigger[aria-selected="false"]:not(:disabled):hover { background: color-mix(in oklch, var(--ui-accent) 55%, transparent); }
+  }
+
+  /* ---- before the indicator is measured (SSR / first paint): style the active trigger itself ---- */
+  .ui-tabs-list:not([data-ready])[data-variant="segmented"] .ui-tabs-trigger[aria-selected="true"] {
+    background: var(--ui-surface-raised);
+    box-shadow: var(--ui-shadow-sm), 0 0 0 1px var(--ui-border-subtle);
+  }
+  .ui-tabs-list:not([data-ready])[data-variant="underline"] .ui-tabs-trigger[aria-selected="true"] { box-shadow: inset 0 -2px 0 var(--ui-primary); }
+  .ui-tabs-list:not([data-ready])[data-variant="underline"][data-orientation="vertical"] .ui-tabs-trigger[aria-selected="true"] { box-shadow: inset -2px 0 0 var(--ui-primary); }
+  .ui-tabs-list:not([data-ready])[data-variant="pills"] .ui-tabs-trigger[aria-selected="true"] { background: var(--ui-accent); }
+
+  /* ---- panels ---- */
+  .ui-tabs-content { outline: none; border-radius: var(--radius-md); min-width: 0; flex: 1 1 auto; }
+  .ui-tabs-content:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-tabs[data-interacted] > .ui-tabs-content[data-state="active"] {
+    animation: ui-rise-in var(--ui-duration) var(--ui-ease-out) both;
+  }
+}

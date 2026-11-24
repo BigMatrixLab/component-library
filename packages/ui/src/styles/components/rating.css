@@ -1,0 +1,74 @@
+/* Rating ------------------------------------------------------------------
+   .ui-rating > .ui-rating-item* > .ui-rating-star + input.ui-rating-input (radio, invisible)
+   Read-only: .ui-rating[data-readonly] holds .ui-rating-star directly (role="img").
+   Star: .ui-rating-empty (outline svg) + .ui-rating-fill (clipped to the filled share)
+   Size: [data-size="sm|lg"] -> --ui-rating-size 16 / 24 / 32px
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-rating {
+    --ui-rating-size: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    vertical-align: middle;
+  }
+  .ui-rating[data-size="sm"] { --ui-rating-size: 1rem; }
+  .ui-rating[data-size="lg"] { --ui-rating-size: 2rem; }
+  .ui-rating[data-readonly] { gap: 0.0625rem; }
+
+  .ui-rating-item {
+    position: relative;
+    display: inline-flex;
+    padding: 0.125rem;
+    border-radius: var(--radius-sm);
+  }
+  @media (pointer: coarse) {
+    .ui-rating-item { padding: 0.25rem; }
+  }
+
+  .ui-rating-star {
+    position: relative;
+    display: block;
+    width: var(--ui-rating-size);
+    height: var(--ui-rating-size);
+    flex-shrink: 0;
+  }
+  .ui-rating-star svg { display: block; width: var(--ui-rating-size); height: var(--ui-rating-size); stroke-width: 1.5; }
+  .ui-rating-empty { color: color-mix(in oklch, var(--ui-muted-foreground) 60%, transparent); }
+  .ui-rating-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    overflow: hidden;
+    transition: width var(--ui-duration-fast) var(--ui-ease-out);
+  }
+  /* Amber fill, darker amber edge: the edge carries the contrast, the fill the colour */
+  .ui-rating-fill svg { max-width: none; fill: var(--ui-warning); stroke: var(--ui-warning-text); }
+
+  /* The chosen star pops: snappy spring from slightly small to rest (it overshoots a touch) */
+  .ui-rating-star[data-pop] { animation: ui-rating-pop var(--ui-spring-snappy-duration) var(--ui-spring-snappy); }
+  @keyframes ui-rating-pop { from { transform: scale(0.72); } to { transform: scale(1); } }
+
+  /* Radios: invisible, laid over the star (left half = half step when allowHalf) */
+  .ui-rating-input {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .ui-rating-input[data-half] { width: 50%; }
+  .ui-rating-input[data-half] ~ .ui-rating-input { left: 50%; width: 50%; }
+  .ui-rating-item:has(.ui-rating-input:focus-visible) {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-rating-item:active .ui-rating-star { transform: scale(0.92); }
+  }
+
+  .ui-rating[data-disabled] { opacity: 0.5; }
+  .ui-rating[data-disabled] .ui-rating-input { cursor: not-allowed; }
+}

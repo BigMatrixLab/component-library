@@ -1,0 +1,63 @@
+/* Breadcrumb --------------------------------------------------------------
+   <nav class="ui-breadcrumb" data-separator="chevron|slash" aria-label="Breadcrumb">
+     <ol class="ui-breadcrumb-list">
+       <li class="ui-breadcrumb-item"><a class="ui-breadcrumb-link">
+       <li class="ui-breadcrumb-separator" role="presentation"> chevron svg + slash span
+       <li class="ui-breadcrumb-item"><button class="ui-breadcrumb-ellipsis">
+       <li class="ui-breadcrumb-item"><span class="ui-breadcrumb-page" aria-current="page">
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-breadcrumb { font-size: var(--text-base); line-height: 1.25rem; }
+
+  .ui-breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ui-muted-foreground);
+    overflow-wrap: anywhere;
+  }
+  .ui-breadcrumb-item { display: inline-flex; align-items: center; gap: 0.375rem; min-width: 0; }
+
+  .ui-breadcrumb-link {
+    border-radius: var(--radius-sm);
+    color: var(--ui-muted-foreground);
+    text-decoration: none;
+    transition: color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-breadcrumb-link:hover { color: var(--ui-foreground); }
+  }
+  .ui-breadcrumb-link:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+
+  .ui-breadcrumb-page { color: var(--ui-foreground); font-weight: 500; }
+
+  .ui-breadcrumb-separator { display: inline-flex; align-items: center; color: var(--ui-muted-foreground); opacity: 0.7; }
+  .ui-breadcrumb-separator .ui-icon { flex: none; }
+  .ui-breadcrumb-slash { display: none; }
+  .ui-breadcrumb[data-separator="slash"] .ui-breadcrumb-chevron { display: none; }
+  .ui-breadcrumb[data-separator="slash"] .ui-breadcrumb-slash { display: inline; }
+
+  /* The collapsed middle: a small button that can host a menu */
+  .ui-breadcrumb-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: var(--radius-sm);
+    color: var(--ui-muted-foreground);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color var(--ui-duration-fast) var(--ui-ease-standard), color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-breadcrumb-ellipsis:hover { background: var(--ui-accent); color: var(--ui-foreground); }
+  }
+  .ui-breadcrumb-ellipsis[aria-expanded="true"] { background: var(--ui-accent); color: var(--ui-foreground); }
+  .ui-breadcrumb-ellipsis:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+}

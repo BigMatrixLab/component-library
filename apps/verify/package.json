@@ -1,0 +1,9 @@
+{
+  "name": "verify",
+  "private": true,
+  "type": "module",
+  "description": "Isolated sandbox that renders AI-generated output from a ui-kit prompt. Never depends on ui-kit itself.",
+  "scripts": {
+    "dev": "next dev --port 4322"
+  }
+}

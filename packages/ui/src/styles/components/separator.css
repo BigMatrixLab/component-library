@@ -1,0 +1,40 @@
+/* Separator ---------------------------------------------------------------
+   <div class="ui-separator" role="none" data-orientation="horizontal">
+   <div class="ui-separator" data-orientation="vertical">   (give the parent a height)
+   Labelled: <div class="ui-separator ui-separator-label"><span class="ui-separator-text">or</span></div>
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-separator {
+    flex-shrink: 0;
+    background-color: var(--ui-border);
+  }
+  .ui-separator[data-orientation="horizontal"] { width: 100%; height: 1px; }
+  .ui-separator[data-orientation="vertical"] { align-self: stretch; width: 1px; min-height: 1rem; height: auto; }
+
+  /* Labelled: the line is drawn either side of the text */
+  .ui-separator-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    height: auto;
+    background: none;
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-xs);
+    line-height: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .ui-separator-label::before,
+  .ui-separator-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: var(--ui-border);
+  }
+  .ui-separator-label > .ui-separator-text { flex-shrink: 0; }
+  .ui-separator-label[data-orientation="vertical"] { flex-direction: column; width: auto; height: 100%; }
+  .ui-separator-label[data-orientation="vertical"]::before,
+  .ui-separator-label[data-orientation="vertical"]::after { width: 1px; height: auto; }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "ui-kit-monorepo",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build -w ui-kit && npm run build -w docs",
+    "build:ui": "npm run build -w ui-kit",
+    "typecheck": "npm run typecheck -w ui-kit && npm run typecheck -w docs",
+    "test": "npm run test -w ui-kit",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1",
+    "pixelmatch": "^8.0.0",
+    "pngjs": "^7.0.0"
+  }
+}

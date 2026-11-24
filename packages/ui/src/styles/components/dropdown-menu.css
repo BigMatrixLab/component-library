@@ -1,0 +1,114 @@
+/* Dropdown menu -------------------------------------------------------------
+   <div class="ui-floating ui-menu" role="menu" popover="manual" data-state data-side>
+     .ui-menu-label  .ui-menu-separator  .ui-menu-group
+     .ui-menu-item  [role=menuitem|menuitemcheckbox|menuitemradio]
+        + -destructive  + -inset  + -check (indicator slot)
+        parts: .ui-menu-icon .ui-menu-shortcut .ui-menu-indicator .ui-menu-dot .ui-menu-chevron
+     States: [data-highlighted] (follows pointer and keyboard), [data-disabled], [data-state]
+     Submenu: .ui-menu.ui-menu-sub, trigger .ui-menu-sub-trigger[data-state=open]
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-menu {
+    min-width: 8rem;
+    width: max-content;
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background: var(--ui-surface-raised);
+    color: var(--ui-surface-raised-foreground);
+    box-shadow: var(--ui-shadow-lg);
+    font-size: var(--text-base);
+    outline: none;
+  }
+  .ui-menu[data-side="bottom"] { --ui-pop-y: -4px; }
+  .ui-menu[data-side="top"] { --ui-pop-y: 4px; }
+  .ui-menu[data-state="open"] { animation: ui-pop-in var(--ui-duration-fast) var(--ui-ease-out) both; }
+  .ui-menu[data-state="closed"] { animation: ui-pop-out var(--ui-duration-exit) var(--ui-ease-in) both; pointer-events: none; }
+  /* line the first item of a submenu up with its trigger (panel padding + border) */
+  .ui-menu-sub { margin-top: -5px; }
+
+  .ui-menu-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2rem;
+    padding: 0 0.5rem;
+    border-radius: var(--radius-md);
+    color: inherit;
+    font-size: var(--text-base);
+    line-height: 1.25rem;
+    text-decoration: none;
+    cursor: default;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+  .ui-menu-item-inset, .ui-menu-item-check { padding-inline-start: 2rem; }
+  .ui-menu-item[data-highlighted],
+  .ui-menu-item[data-state="open"].ui-menu-sub-trigger {
+    background: var(--ui-accent);
+    color: var(--ui-accent-foreground);
+  }
+  .ui-menu-item[data-disabled] { opacity: 0.5; pointer-events: none; }
+
+  .ui-menu-item-destructive { color: var(--ui-destructive-text); }
+  .ui-menu-item-destructive[data-highlighted] {
+    background: color-mix(in oklch, var(--ui-destructive) 6%, transparent);
+    color: var(--ui-destructive-text);
+  }
+
+  .ui-menu-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--ui-muted-foreground);
+  }
+  .ui-menu-icon > svg { width: 1rem; height: 1rem; }
+  .ui-menu-item[data-highlighted] .ui-menu-icon,
+  .ui-menu-item-destructive .ui-menu-icon { color: inherit; }
+
+  .ui-menu-shortcut {
+    margin-inline-start: auto;
+    padding-inline-start: 1.5rem;
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-xs);
+    letter-spacing: 0.02em;
+  }
+  .ui-menu-item[data-highlighted] .ui-menu-shortcut {
+    color: color-mix(in oklch, var(--ui-accent-foreground) 72%, transparent);
+  }
+
+  .ui-menu-indicator {
+    position: absolute;
+    left: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+  }
+  .ui-menu-dot { width: 0.4375rem; height: 0.4375rem; border-radius: 9999px; background: currentColor; }
+
+  .ui-menu-chevron { width: 1rem; height: 1rem; margin-inline-start: auto; color: var(--ui-muted-foreground); }
+  .ui-menu-item[data-highlighted] .ui-menu-chevron,
+  .ui-menu-sub-trigger[data-state="open"] .ui-menu-chevron { color: inherit; }
+
+  .ui-menu-label {
+    padding: 0.375rem 0.5rem;
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-xs);
+    line-height: 1rem;
+    font-weight: 500;
+  }
+  .ui-menu-separator { height: 1px; margin: 4px -4px; background: var(--ui-border); }
+
+  /* iOS Safari only dispatches click on elements that look clickable */
+  @media (hover: none) {
+    .ui-menu-item { cursor: pointer; }
+  }
+}

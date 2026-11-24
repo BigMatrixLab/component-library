@@ -1,0 +1,68 @@
+/* ==========================================================================
+   Layer 1 — raw palette. Components never read these directly; the semantic
+   layer (semantic.css) and theme packs map them to roles.
+   OKLCH throughout so lightness steps are perceptually even.
+   ========================================================================== */
+
+:root {
+  /* Neutral (cool zinc) */
+  --ui-gray-0: oklch(1 0 0);
+  --ui-gray-25: oklch(0.99 0.001 286);
+  --ui-gray-50: oklch(0.985 0.001 286);
+  --ui-gray-100: oklch(0.967 0.002 286);
+  --ui-gray-150: oklch(0.945 0.003 286);
+  --ui-gray-200: oklch(0.92 0.004 286);
+  --ui-gray-300: oklch(0.871 0.006 286);
+  --ui-gray-400: oklch(0.705 0.015 286);
+  --ui-gray-500: oklch(0.52 0.016 286);       /* muted text: ≥ 4.5:1 on white and on gray-100 */
+  --ui-gray-600: oklch(0.442 0.017 286);
+  --ui-gray-700: oklch(0.37 0.013 286);
+  --ui-gray-800: oklch(0.274 0.006 286);
+  --ui-gray-850: oklch(0.235 0.006 286);
+  --ui-gray-900: oklch(0.21 0.006 286);
+  --ui-gray-925: oklch(0.185 0.006 286);
+  --ui-gray-950: oklch(0.141 0.005 286);
+  --ui-gray-1000: oklch(0.11 0.004 286);
+
+  /* Colour steps are named by role, not lightness alone:
+     *-600 = solid fill under white text (≥ 4.5:1 with white)
+     *-700 = text / icons on light surfaces and on 10–16% tints of the fill (≥ 4.5:1)
+     *-300 = text / icons on dark surfaces (≥ 4.5:1 on gray-950)
+     Contrast was measured, see scripts in the repo history (Phase 0). */
+
+  /* Status */
+  --ui-red-700: oklch(0.5 0.21 27);
+  --ui-red-600: oklch(0.53 0.22 27);
+  --ui-red-300: oklch(0.704 0.191 22.2);
+  --ui-green-700: oklch(0.48 0.14 150);
+  --ui-green-600: oklch(0.52 0.15 150);
+  --ui-green-300: oklch(0.723 0.192 149.6);
+  --ui-amber-500: oklch(0.769 0.165 70.1);     /* fill under dark text */
+  --ui-amber-700: oklch(0.5 0.12 62);          /* warning text on light surfaces */
+  --ui-amber-300: oklch(0.828 0.189 84.4);
+  --ui-blue-700: oklch(0.51 0.2 263);
+  --ui-blue-600: oklch(0.546 0.215 262.9);
+  --ui-blue-300: oklch(0.68 0.17 259);
+
+  /* Accent hues */
+  --ui-violet-700: oklch(0.5 0.23 293);
+  --ui-violet-600: oklch(0.541 0.247 293);
+  --ui-violet-300: oklch(0.68 0.19 293);
+  --ui-emerald-700: oklch(0.48 0.12 163);
+  --ui-emerald-600: oklch(0.53 0.13 163);
+  --ui-emerald-300: oklch(0.696 0.17 162.5);
+  --ui-rose-700: oklch(0.52 0.2 17);
+  --ui-rose-600: oklch(0.586 0.222 17.6);
+  --ui-rose-300: oklch(0.7 0.19 17);
+  --ui-orange-700: oklch(0.51 0.17 41);
+  --ui-orange-600: oklch(0.56 0.19 41);
+  --ui-orange-300: oklch(0.705 0.213 47.6);
+
+  /* Data series */
+  --ui-series-indigo: oklch(0.585 0.233 277.1);
+  --ui-series-teal: oklch(0.696 0.17 162.5);
+  --ui-series-amber: oklch(0.769 0.165 70.1);
+  --ui-series-pink: oklch(0.645 0.246 16.4);
+  --ui-series-sky: oklch(0.623 0.188 259.8);
+  --ui-series-lime: oklch(0.768 0.204 130.9);
+}

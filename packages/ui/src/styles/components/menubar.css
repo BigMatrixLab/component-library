@@ -1,0 +1,59 @@
+/* Menubar -----------------------------------------------------------------
+   <div class="ui-menubar" role="menubar">
+     <button class="ui-menubar-trigger" role="menuitem" data-state="open|closed">File</button>
+   Panels are .ui-floating.ui-menu.ui-menubar-content and reuse the dropdown
+   menu's .ui-menu-* item classes.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-menubar {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 2.5rem;
+    padding: 4px;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background: var(--ui-surface-raised);
+    color: var(--ui-surface-raised-foreground);
+    box-shadow: var(--ui-shadow-xs);
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .ui-menubar::-webkit-scrollbar { display: none; }
+
+  .ui-menubar-trigger {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 1.875rem;
+    padding: 0 0.625rem;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: inherit;
+    font-size: var(--text-base);
+    font-weight: 500;
+    line-height: 1;
+    cursor: default;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition: background-color var(--ui-duration-fast) var(--ui-ease-standard), color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-menubar-trigger[data-state="open"] {
+    background: var(--ui-accent);
+    color: var(--ui-accent-foreground);
+  }
+  .ui-menubar-trigger:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-menubar-trigger:hover { background: var(--ui-accent); color: var(--ui-accent-foreground); }
+  }
+  @media (hover: none) {
+    .ui-menubar-trigger { cursor: pointer; }
+  }
+
+  .ui-menubar-content { min-width: 12rem; }
+}

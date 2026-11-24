@@ -1,0 +1,81 @@
+/* Accordion + Collapsible --------------------------------------------------
+   <div class="ui-accordion" data-variant="default|cards|flush">
+     <div class="ui-accordion-item" data-state="open|closed">
+       <h3 class="ui-accordion-header"><button class="ui-accordion-trigger"> … .ui-accordion-chevron
+       <div class="ui-collapse ui-accordion-content">           grid, row animates 0fr to 1fr
+         <div class="ui-collapse-inner"><div class="ui-accordion-body">
+   Collapsible: .ui-collapsible > trigger + .ui-collapse.ui-collapsible-content
+   ------------------------------------------------------------------------ */
+
+@keyframes ui-collapse-open { from { grid-template-rows: 0fr; opacity: 0; } to { grid-template-rows: 1fr; opacity: 1; } }
+@keyframes ui-collapse-close { from { grid-template-rows: 1fr; opacity: 1; } to { grid-template-rows: 0fr; opacity: 0; } }
+
+@layer components {
+  /* The animated region (shared) */
+  .ui-collapse { display: grid; grid-template-rows: 0fr; }
+  .ui-collapse[data-state="open"] { grid-template-rows: 1fr; }
+  .ui-collapse-inner { min-height: 0; overflow: hidden; }
+  .ui-collapse[data-animate][data-state="open"] {
+    animation: ui-collapse-open var(--ui-spring-smooth-duration) var(--ui-spring-smooth) both;
+  }
+  /* Closing is quicker than opening */
+  .ui-collapse[data-animate][data-state="closed"] {
+    animation: ui-collapse-close 260ms var(--ui-ease-in-out) both;
+  }
+
+  /* ---- accordion ---- */
+  .ui-accordion { display: grid; width: 100%; }
+  .ui-accordion-header { display: flex; margin: 0; font-size: inherit; font-weight: inherit; }
+  .ui-accordion-trigger {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 0;
+    text-align: start;
+    font-size: var(--text-md);
+    line-height: 1.5rem;
+    font-weight: 500;
+    color: var(--ui-foreground);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--ui-duration-fast) var(--ui-ease-standard), background-color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-accordion-trigger:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ui-accordion-trigger:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-accordion-chevron {
+    flex: none;
+    color: var(--ui-muted-foreground);
+    transition: transform var(--ui-duration) var(--ui-ease-out);
+  }
+  .ui-accordion-trigger[aria-expanded="true"] .ui-accordion-chevron { transform: rotate(180deg); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-accordion-trigger:not(:disabled):hover .ui-accordion-chevron { color: var(--ui-foreground); }
+  }
+  .ui-accordion-body { padding-bottom: 1rem; font-size: var(--text-base); color: var(--ui-muted-foreground); }
+
+  /* default: divided */
+  .ui-accordion[data-variant="default"] > .ui-accordion-item { border-bottom: 1px solid var(--ui-border); }
+
+  /* cards: separated surfaces */
+  .ui-accordion[data-variant="cards"] { gap: 0.5rem; }
+  .ui-accordion[data-variant="cards"] > .ui-accordion-item {
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background: var(--ui-surface);
+    color: var(--ui-surface-foreground);
+    transition: border-color var(--ui-duration) var(--ui-ease-standard), background-color var(--ui-duration) var(--ui-ease-standard);
+  }
+  .ui-accordion[data-variant="cards"] > .ui-accordion-item[data-state="open"] { border-color: var(--ui-border-strong); }
+  .ui-accordion[data-variant="cards"] > .ui-accordion-item > .ui-accordion-header > .ui-accordion-trigger { padding: 0.875rem 1rem; border-radius: var(--radius-lg); }
+  .ui-accordion[data-variant="cards"] .ui-accordion-body { padding: 0 1rem 1rem; }
+
+  /* flush: no lines, tight */
+  .ui-accordion[data-variant="flush"] .ui-accordion-trigger { padding: 0.625rem 0; }
+  .ui-accordion[data-variant="flush"] .ui-accordion-body { padding-bottom: 0.75rem; }
+
+  /* ---- collapsible ---- */
+  .ui-collapsible-content { font-size: var(--text-base); }
+}

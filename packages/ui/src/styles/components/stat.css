@@ -1,0 +1,111 @@
+/* Stat & metric -----------------------------------------------------------
+   .ui-stat > .ui-stat-label, .ui-stat-value, .ui-stat-delta, .ui-stat-help, .ui-stat-chart
+   .ui-stat-delta[data-tone="positive|negative|neutral"][data-direction="up|down|flat"]
+   .ui-stat-group > .ui-stat-group-grid > .ui-stat       (+ .ui-stat-group-shared)
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    padding: 1.25rem;
+    color: var(--ui-surface-foreground);
+  }
+
+  .ui-stat-label {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-sm);
+    line-height: 1.25rem;
+    font-weight: 500;
+  }
+
+  .ui-stat-value {
+    margin-top: 0.25rem;
+    color: var(--ui-foreground);
+    font-size: var(--text-3xl);
+    line-height: 1.1;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .ui-stat-delta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.125rem 0.5rem;
+    margin-top: 0.25rem;
+    font-size: var(--text-sm);
+    line-height: 1.25rem;
+  }
+  .ui-stat-delta-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-muted-foreground);
+  }
+  .ui-stat-delta[data-tone="positive"] .ui-stat-delta-value { color: var(--ui-success-text); }
+  .ui-stat-delta[data-tone="negative"] .ui-stat-delta-value { color: var(--ui-destructive-text); }
+  .ui-stat-delta-comparison { color: var(--ui-muted-foreground); }
+
+  .ui-stat-help {
+    margin: 0.25rem 0 0;
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-xs);
+    line-height: 1.25rem;
+  }
+
+  .ui-stat-chart {
+    margin-top: 0.75rem;
+    height: 2rem;
+    min-width: 0;
+  }
+
+  /* Announced by screen readers, never seen */
+  .ui-stat-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Group: separate cards */
+  .ui-stat-group { min-width: 0; }
+  .ui-stat-group-grid {
+    --ui-stat-min: 13rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--ui-stat-min)), 1fr));
+    gap: 1rem;
+  }
+  .ui-stat-group:not(.ui-stat-group-shared) .ui-stat {
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--ui-surface);
+  }
+
+  /* Group: shared border — one surface, hairlines between cells.
+     Each cell draws its right and bottom edge; the grid overhangs the clipped
+     container by 1px so the outermost edges disappear under the container border. */
+  .ui-stat-group-shared {
+    overflow: hidden;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--ui-surface);
+  }
+  .ui-stat-group-shared .ui-stat-group-grid {
+    gap: 0;
+    margin: 0 -1px -1px 0;
+  }
+  .ui-stat-group-shared .ui-stat {
+    box-shadow: 1px 0 0 0 var(--ui-border), 0 1px 0 0 var(--ui-border);
+  }
+}

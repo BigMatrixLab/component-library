@@ -1,0 +1,112 @@
+/* Carousel ----------------------------------------------------------------
+   .ui-carousel[data-orientation="horizontal|vertical"]
+     > .ui-carousel-viewport (native scroll-snap, tabindex=0)
+         > .ui-carousel-content (flex track) > .ui-carousel-item (role=group slide)
+     > .ui-carousel-nav (.ui-carousel-prev | .ui-carousel-next)   floating round buttons
+     > .ui-carousel-dots > .ui-carousel-dot[data-state="active|inactive"]
+   Knobs (set on the root): --ui-carousel-gap (1rem), --ui-carousel-per-view (1).
+   Swipe, trackpad and wheel are the browser's; snapping is CSS.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-carousel {
+    --ui-carousel-gap: 1rem;
+    --ui-carousel-per-view: 1;
+    position: relative;
+    min-width: 0;
+  }
+
+  .ui-carousel-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: var(--radius-lg);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior-x: contain;
+    outline: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ui-carousel-viewport::-webkit-scrollbar { display: none; }
+  .ui-carousel-viewport:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-carousel[data-orientation="vertical"] > .ui-carousel-viewport {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    overscroll-behavior-x: auto;
+    overscroll-behavior-y: contain;
+  }
+
+  .ui-carousel-content {
+    position: relative; /* slides measure their offset from here */
+    display: flex;
+    gap: var(--ui-carousel-gap);
+  }
+  .ui-carousel-content[data-orientation="vertical"] { flex-direction: column; height: 100%; }
+
+  .ui-carousel-item {
+    flex: 0 0 var(--ui-carousel-basis, calc((100% - (var(--ui-carousel-per-view) - 1) * var(--ui-carousel-gap)) / var(--ui-carousel-per-view)));
+    min-width: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .ui-carousel-content[data-orientation="vertical"] > .ui-carousel-item { min-height: 0; }
+
+  /* Prev / next: round buttons floating over the track edges (a floating layer, so they may cast a shadow) */
+  .ui-carousel-nav {
+    position: absolute;
+    z-index: 2;
+    top: calc(50% - 1rem);
+    border-radius: 9999px;
+    box-shadow: var(--ui-shadow-md);
+  }
+  .ui-carousel:has(.ui-carousel-dots) > .ui-carousel-nav { top: calc(50% - 1rem - 1.25rem); }
+  .ui-carousel-prev { left: 0.75rem; }
+  .ui-carousel-next { right: 0.75rem; }
+  .ui-carousel-nav[data-orientation="vertical"] { right: auto; left: calc(50% - 1rem); }
+  .ui-carousel-nav.ui-carousel-prev[data-orientation="vertical"] { top: 0.75rem; }
+  .ui-carousel-nav.ui-carousel-next[data-orientation="vertical"] { top: auto; bottom: 0.75rem; }
+  .ui-carousel-nav[aria-disabled="true"] { box-shadow: none; }
+
+  /* Dots: 24px hit areas around 8px dots; the active one stretches into a pill */
+  .ui-carousel-dots {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+  .ui-carousel-dot {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 9999px;
+    background: transparent;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ui-carousel-dot::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: var(--ui-border-strong);
+    transition:
+      width var(--ui-spring-snappy-duration) var(--ui-spring-snappy),
+      background-color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-carousel-dot[aria-current="true"]::before { width: 1.25rem; background-color: var(--ui-primary); }
+  .ui-carousel-dot:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-carousel-dot:not([aria-current="true"]):hover::before { background-color: var(--ui-muted-foreground); }
+  }
+  .ui-carousel-dots[data-orientation="vertical"] { position: absolute; top: 50%; right: 0.5rem; flex-direction: column; margin: 0; transform: translateY(-50%); }
+  .ui-carousel-dots[data-orientation="vertical"] .ui-carousel-dot::before { transition-property: height, background-color; }
+  .ui-carousel-dots[data-orientation="vertical"] .ui-carousel-dot[aria-current="true"]::before { width: 0.5rem; height: 1.25rem; }
+}

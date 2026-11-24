@@ -1,0 +1,143 @@
+/* Checkbox ----------------------------------------------------------------
+   <label class="ui-checkbox [ui-checkbox-card] [ui-checkbox-sm|-lg]">
+     <span class="ui-checkbox-control">
+       <input class="ui-checkbox-input" type="checkbox"> <span class="ui-checkbox-box"><svg>…</svg></span>
+     </span>
+     <span class="ui-checkbox-text"><span class="ui-checkbox-label"> <span class="ui-checkbox-description">
+   State: data-state="checked|unchecked|indeterminate" on the label, [data-disabled], [data-invalid].
+   The native input sits invisibly over the box, so clicks, focus and forms are all native.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-checkbox {
+    --ui-box: 1.25rem;
+    --ui-box-lh: 1.375rem;
+    position: relative;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    color: var(--ui-foreground);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ui-checkbox-sm { --ui-box: 1rem; --ui-box-lh: 1.25rem; font-size: var(--text-sm); line-height: var(--text-sm--line-height); gap: 0.5rem; }
+  .ui-checkbox-lg { --ui-box: 1.5rem; --ui-box-lh: 1.5rem; font-size: var(--text-md); line-height: var(--text-md--line-height); gap: 0.75rem; }
+
+  .ui-checkbox-control {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--ui-box);
+    height: var(--ui-box-lh);
+  }
+  .ui-checkbox-input {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: inherit;
+    appearance: none;
+  }
+
+  .ui-checkbox-box {
+    display: grid;
+    place-items: center;
+    width: var(--ui-box);
+    height: var(--ui-box);
+    border: 1px solid var(--ui-border-strong);
+    border-radius: var(--radius-sm);
+    background-color: var(--ui-surface);
+    color: var(--ui-control-glyph);
+    box-shadow: var(--ui-shadow-xs);
+    pointer-events: none;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  .ui-checkbox-mark { width: 100%; height: 100%; }
+  .ui-checkbox-check,
+  .ui-checkbox-dash {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset var(--ui-duration) var(--ui-ease-out);
+  }
+
+  /* Checked / indeterminate */
+  .ui-checkbox-input:checked + .ui-checkbox-box,
+  .ui-checkbox-input:indeterminate + .ui-checkbox-box {
+    background-color: var(--ui-control-on);
+    border-color: var(--ui-control-on);
+    box-shadow: none;
+  }
+  .ui-checkbox-input:checked:not(:indeterminate) + .ui-checkbox-box .ui-checkbox-check { stroke-dashoffset: 0; transition-delay: 40ms; }
+  .ui-checkbox-input:indeterminate + .ui-checkbox-box .ui-checkbox-dash { stroke-dashoffset: 0; transition-delay: 40ms; }
+
+  /* Press */
+  .ui-checkbox-input:active:not(:disabled) + .ui-checkbox-box { transform: scale(0.92); }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ui-checkbox-input:hover:not(:disabled, :checked, :indeterminate) + .ui-checkbox-box { border-color: color-mix(in oklch, var(--ui-foreground) 35%, var(--ui-border-strong)); }
+    .ui-checkbox-input:hover:not(:disabled):is(:checked, :indeterminate) + .ui-checkbox-box { background-color: color-mix(in oklch, var(--ui-control-on) 88%, var(--ui-background)); }
+  }
+
+  .ui-checkbox-input:focus-visible + .ui-checkbox-box { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+
+  /* Invalid */
+  .ui-checkbox-input[aria-invalid="true"] + .ui-checkbox-box { border-color: var(--ui-destructive); }
+  .ui-checkbox-input[aria-invalid="true"]:is(:checked, :indeterminate) + .ui-checkbox-box {
+    background-color: var(--ui-destructive);
+    color: var(--ui-destructive-foreground);
+  }
+  .ui-checkbox-input[aria-invalid="true"]:focus-visible + .ui-checkbox-box { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-destructive) 35%, transparent); }
+
+  /* Text */
+  .ui-checkbox-text { display: grid; gap: 0.125rem; min-width: 0; user-select: none; }
+  .ui-checkbox-label { font-weight: 500; }
+  .ui-checkbox-description { color: var(--ui-muted-foreground); font-size: var(--text-sm); line-height: var(--text-sm--line-height); }
+
+  /* Disabled */
+  .ui-checkbox[data-disabled] { cursor: not-allowed; }
+  .ui-checkbox[data-disabled] .ui-checkbox-box,
+  .ui-checkbox[data-disabled] .ui-checkbox-text { opacity: 0.5; }
+  .ui-checkbox[data-disabled] .ui-checkbox-box { box-shadow: none; }
+
+  /* Choice card: the whole card is the target */
+  .ui-checkbox-card {
+    display: flex;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--ui-surface);
+    transition:
+      background-color var(--ui-duration) var(--ui-ease-standard),
+      border-color var(--ui-duration) var(--ui-ease-standard),
+      box-shadow var(--ui-duration) var(--ui-ease-standard);
+  }
+  .ui-checkbox-card .ui-checkbox-text { flex: 1; }
+  .ui-checkbox-card[data-state="checked"],
+  .ui-checkbox-card[data-state="indeterminate"] {
+    border-color: var(--ui-control-on);
+    background-color: color-mix(in oklch, var(--ui-control-on) 6%, var(--ui-surface));
+    box-shadow: inset 0 0 0 1px var(--ui-control-on);
+  }
+  .ui-checkbox-card[data-invalid] { border-color: var(--ui-destructive); }
+  .ui-checkbox-card:has(.ui-checkbox-input:focus-visible) { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-checkbox-card[data-state="checked"]:has(.ui-checkbox-input:focus-visible) {
+    box-shadow: inset 0 0 0 1px var(--ui-control-on), 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent);
+  }
+  .ui-checkbox-card .ui-checkbox-input:focus-visible + .ui-checkbox-box { box-shadow: none; }
+  .ui-checkbox-card[data-disabled] .ui-checkbox-text,
+  .ui-checkbox-card[data-disabled] .ui-checkbox-box { opacity: 0.5; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-checkbox-card:hover:not([data-disabled], [data-state="checked"]) { background-color: var(--ui-accent); }
+  }
+}

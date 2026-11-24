@@ -1,0 +1,92 @@
+/* Card --------------------------------------------------------------------
+   .ui-card  + variant: -interactive -muted -inset
+   Parts: .ui-card-header (> -title -description, -action top-right),
+          .ui-card-content, .ui-card-footer
+   Rests on a 1px border, no shadow. Vertical rhythm: 20px padding, 16px gap.
+   Concentric corners: inner radius = outer radius - the gap between them
+   (-inset uses --ui-card-gap, 8px by default).
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-card {
+    --ui-card-radius: var(--radius-xl);
+    --ui-card-padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-block: var(--ui-card-padding);
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-card-radius);
+    background-color: var(--ui-surface);
+    color: var(--ui-surface-foreground);
+    text-decoration: none;
+  }
+
+  .ui-card-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1rem;
+    row-gap: 0.25rem;
+    align-items: start;
+    padding-inline: var(--ui-card-padding);
+  }
+  .ui-card-header > * { grid-column: 1; }
+  .ui-card-title {
+    margin: 0;
+    font-size: var(--text-md);
+    line-height: var(--text-md--line-height);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .ui-card-description {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+  .ui-card-action { grid-column: 2; grid-row: 1 / span 2; align-self: start; justify-self: end; }
+  .ui-card-content { padding-inline: var(--ui-card-padding); }
+  .ui-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding-inline: var(--ui-card-padding);
+  }
+
+  /* Muted: a quiet well, no border */
+  .ui-card-muted { border-color: transparent; background-color: var(--ui-surface-muted); color: var(--ui-foreground); }
+
+  /* Inset: a muted card nested in another card, concentric with it */
+  .ui-card-inset {
+    --ui-card-gap: 0.5rem;
+    --ui-card-padding: 1rem;
+    border-color: transparent;
+    border-radius: max(var(--radius-xs), calc(var(--radius-xl) - var(--ui-card-gap)));
+    background-color: var(--ui-surface-muted);
+    color: var(--ui-foreground);
+  }
+
+  /* Interactive: a link or button-like card. Lifts and strengthens its border; no shadow. */
+  .ui-card-interactive {
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-smooth-duration) var(--ui-spring-smooth);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-card-interactive:hover {
+      transform: translateY(-2px);
+      border-color: var(--ui-border-strong);
+      background-color: color-mix(in oklch, var(--ui-surface) 94%, var(--ui-foreground));
+    }
+  }
+  .ui-card-interactive:active { transform: scale(0.985); transition-duration: var(--ui-duration-instant); }
+  .ui-card-interactive:focus-visible {
+    border-color: var(--ui-ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent);
+  }
+}

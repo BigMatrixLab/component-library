@@ -1,0 +1,41 @@
+/* Tooltip -----------------------------------------------------------------
+   <div class="ui-floating ui-tooltip" role="tooltip" popover="manual" data-state data-side>
+     text  <kbd class="ui-tooltip-kbd">⌘B</kbd>
+   Inverted bubble: foreground fill, background text.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-tooltip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: max-content;
+    max-width: min(20rem, calc(100vw - 1rem));
+    padding: 0.375rem 0.625rem;
+    border-radius: var(--radius-md);
+    background: var(--ui-foreground);
+    color: var(--ui-background);
+    box-shadow: var(--ui-shadow-md);
+    font-size: var(--text-xs);
+    line-height: 1rem;
+    font-weight: 500;
+  }
+  .ui-tooltip[data-side="bottom"] { --ui-pop-y: -3px; }
+  .ui-tooltip[data-side="top"] { --ui-pop-y: 3px; }
+  .ui-tooltip[data-state="open"] { animation: ui-pop-in var(--ui-duration-fast) var(--ui-ease-out) both; }
+  .ui-tooltip[data-state="closed"] { animation: ui-pop-out var(--ui-duration-instant) var(--ui-ease-in) both; pointer-events: none; }
+
+  .ui-tooltip-kbd {
+    display: inline-flex;
+    align-items: center;
+    height: 1.125rem;
+    padding-inline: 0.3125rem;
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklch, var(--ui-background) 18%, transparent);
+    color: var(--ui-background);
+    font-family: var(--ui-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+}

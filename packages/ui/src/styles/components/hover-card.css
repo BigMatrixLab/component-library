@@ -1,0 +1,30 @@
+/* Hover card ----------------------------------------------------------------
+   <div class="ui-floating ui-hover-card" popover="manual" data-state data-side>
+     any content; optional <span class="ui-floating-arrow">
+   Parts for a profile preview: .ui-hover-card-header .ui-hover-card-title
+   .ui-hover-card-meta .ui-hover-card-text
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-hover-card {
+    width: 20rem;
+    max-width: calc(100vw - 1rem);
+    padding: 1rem;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background: var(--ui-surface-raised);
+    color: var(--ui-surface-raised-foreground);
+    box-shadow: var(--ui-shadow-lg);
+    font-size: var(--text-base);
+    outline: none;
+  }
+  .ui-hover-card[data-side="bottom"] { --ui-pop-y: -6px; }
+  .ui-hover-card[data-side="top"] { --ui-pop-y: 6px; }
+  .ui-hover-card[data-state="open"] { animation: ui-pop-in var(--ui-duration) var(--ui-ease-out) both; }
+  .ui-hover-card[data-state="closed"] { animation: ui-pop-out var(--ui-duration-exit) var(--ui-ease-in) both; pointer-events: none; }
+
+  .ui-hover-card-header { display: flex; align-items: flex-start; gap: 0.75rem; }
+  .ui-hover-card-title { font-weight: 600; line-height: 1.25rem; }
+  .ui-hover-card-meta { color: var(--ui-muted-foreground); font-size: var(--text-sm); line-height: 1.25rem; }
+  .ui-hover-card-text { margin-top: 0.75rem; font-size: var(--text-sm); line-height: 1.375rem; }
+}

@@ -1,0 +1,103 @@
+/* ==========================================================================
+   Motion — the "soft rise" signature.
+   Entrances rise 4–8px with a light blur and scale ≥ .96; exits are faster.
+   Spring presets are real damped-spring curves (scripts/gen-springs.mjs).
+   ========================================================================== */
+
+:root {
+  --ui-duration-instant: 100ms;
+  --ui-duration-fast: 150ms;
+  --ui-duration-exit: 160ms;
+  --ui-duration: 220ms;
+  --ui-duration-slow: 380ms;
+
+  --ui-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ui-ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --ui-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ui-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* snappy: press feedback, small indicators — perceptual 260ms, bounce .12 */
+  --ui-spring-snappy: linear(0, 0.0118, 0.043, 0.088, 0.1426, 0.2029, 0.2664, 0.3307, 0.3943, 0.4558, 0.5144, 0.5694, 0.6206, 0.6677, 0.7107, 0.7496, 0.7845, 0.8157, 0.8433, 0.8677, 0.889, 0.9075, 0.9236, 0.9374, 0.9492, 0.9593, 0.9678, 0.9749, 0.9808, 0.9857, 0.9897, 0.993, 0.9956, 0.9976, 0.9992, 1.0005, 1.0014, 1.002, 1.0025, 1.0028, 1.0029, 1.003, 1.0029, 1.0028, 1.0027, 1.0026, 1.0024, 1.0022, 1);
+  --ui-spring-snappy-duration: 320ms;
+  /* smooth: panels, height, drawers, progress — never overshoots */
+  --ui-spring-smooth: linear(0, 0.0139, 0.0495, 0.0995, 0.1582, 0.2215, 0.2864, 0.3507, 0.4129, 0.472, 0.5273, 0.5786, 0.6256, 0.6685, 0.7073, 0.7423, 0.7736, 0.8015, 0.8263, 0.8483, 0.8677, 0.8848, 0.8998, 0.913, 0.9246, 0.9347, 0.9435, 0.9511, 0.9578, 0.9636, 0.9686, 0.9729, 0.9767, 0.98, 0.9828, 0.9852, 0.9873, 0.9891, 0.9906, 0.992, 0.9931, 0.9941, 0.995, 0.9957, 0.9963, 0.9968, 0.9973, 0.9977, 1);
+  --ui-spring-smooth-duration: 540ms;
+  /* morph: gliding highlights, width that follows content — bounce .16 */
+  --ui-spring-morph: linear(0, 0.0133, 0.0485, 0.0991, 0.1599, 0.227, 0.2969, 0.3673, 0.4361, 0.5021, 0.5643, 0.622, 0.6749, 0.7228, 0.7658, 0.804, 0.8377, 0.867, 0.8924, 0.9142, 0.9327, 0.9483, 0.9613, 0.9721, 0.9808, 0.9879, 0.9935, 0.9979, 1.0012, 1.0036, 1.0054, 1.0066, 1.0073, 1.0076, 1.0077, 1.0076, 1.0073, 1.0069, 1.0064, 1.0059, 1.0053, 1.0048, 1.0042, 1.0037, 1.0033, 1.0028, 1.0024, 1.0021, 1);
+  --ui-spring-morph-duration: 550ms;
+
+  --ui-stagger: 35ms;
+  --ui-blur-subtle: 2px;
+  --ui-blur-soft: 4px;
+}
+
+@theme {
+  --animate-rise: ui-rise-in var(--ui-duration-slow) var(--ui-ease-out) both;
+  --animate-pop: ui-pop-in var(--ui-duration) var(--ui-ease-out) both;
+  --animate-fade: ui-fade-in var(--ui-duration) var(--ui-ease-out) both;
+  --animate-shimmer: ui-shimmer 1.6s linear infinite;
+  --animate-spin: ui-spin 0.7s linear infinite;
+
+  @keyframes ui-rise-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.985); filter: blur(var(--ui-blur-soft)); }
+    to { opacity: 1; transform: none; filter: none; }
+  }
+  @keyframes ui-pop-in {
+    from { opacity: 0; transform: translateY(var(--ui-pop-y, 0)) scale(0.96); filter: blur(var(--ui-blur-subtle)); }
+    to { opacity: 1; transform: none; filter: none; }
+  }
+  @keyframes ui-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes ui-shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+  @keyframes ui-spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+@keyframes ui-pop-out {
+  from { opacity: 1; transform: none; filter: none; }
+  to { opacity: 0; transform: translateY(var(--ui-pop-y, 0)) scale(0.97); filter: blur(var(--ui-blur-subtle)); }
+}
+@keyframes ui-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes ui-slide-in-right { from { transform: translateX(100%); } }
+@keyframes ui-slide-out-right { to { transform: translateX(100%); } }
+@keyframes ui-slide-in-left { from { transform: translateX(-100%); } }
+@keyframes ui-slide-out-left { to { transform: translateX(-100%); } }
+@keyframes ui-slide-in-top { from { transform: translateY(-100%); } }
+@keyframes ui-slide-out-top { to { transform: translateY(-100%); } }
+@keyframes ui-slide-in-bottom { from { transform: translateY(100%); } }
+@keyframes ui-slide-out-bottom { to { transform: translateY(100%); } }
+@keyframes ui-draw { from { stroke-dashoffset: var(--ui-dash, 1000); } to { stroke-dashoffset: 0; } }
+
+@layer components {
+  .ui-animate-rise { animation: var(--animate-rise); }
+  .ui-animate-pop { animation: var(--animate-pop); }
+  .ui-animate-fade { animation: var(--animate-fade); }
+
+  /* Stagger children — one orchestrated entrance per view, total < 400ms */
+  .ui-stagger > * { animation: var(--animate-rise); animation-delay: calc(var(--ui-i, 0) * var(--ui-stagger)); }
+  .ui-stagger > :nth-child(2) { --ui-i: 1; }
+  .ui-stagger > :nth-child(3) { --ui-i: 2; }
+  .ui-stagger > :nth-child(4) { --ui-i: 3; }
+  .ui-stagger > :nth-child(5) { --ui-i: 4; }
+  .ui-stagger > :nth-child(6) { --ui-i: 5; }
+  .ui-stagger > :nth-child(7) { --ui-i: 6; }
+  .ui-stagger > :nth-child(8) { --ui-i: 7; }
+  .ui-stagger > :nth-child(n + 9) { --ui-i: 8; }
+}
+
+/* Reduced motion: the state changes, the movement doesn't */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

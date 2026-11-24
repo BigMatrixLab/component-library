@@ -1,0 +1,233 @@
+/* DatePicker / DateRangePicker --------------------------------------------
+   Also home of the two pieces TimePicker shares: .ui-picker-field and .ui-picker-panel.
+
+   <div class="ui-picker-field ui-datepicker [ui-picker-field-sm|lg]" data-state="open|closed" data-disabled data-invalid>
+     <button class="ui-picker-trigger" aria-haspopup="dialog" aria-expanded>
+       <svg class="ui-picker-icon"> <span class="ui-picker-value" [data-placeholder]>Nov 24, 2026</span>
+     </button>
+     or, typeable: <input class="ui-picker-input">
+     <button class="ui-input-action" aria-label="Clear date">…</button>
+     <input type="hidden" name="due" value="2026-11-24">
+     <div class="ui-floating ui-picker-panel" popover="manual" data-state>…<div class="ui-calendar">…</div></div>
+   </div>
+
+   Range panel: .ui-daterange-panel > .ui-daterange
+     .ui-daterange-presets > .ui-daterange-preset[aria-pressed]
+     .ui-daterange-main > .ui-calendar + .ui-daterange-footer (summary, Cancel, Apply)
+   Sizes are the same CSS variables as Input (--ui-input-h / -fs / -px / -r).
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  /* ---- Field: looks like an Input ------------------------------------- */
+  .ui-picker-field {
+    --ui-input-bg: var(--ui-background);
+    --ui-input-border: var(--ui-border-strong);
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    height: var(--ui-input-h, 2.25rem);
+    border: 1px solid var(--ui-input-border);
+    border-radius: var(--ui-input-r, var(--radius-md));
+    background-color: var(--ui-input-bg);
+    color: var(--ui-foreground);
+    font-size: var(--ui-input-fs, var(--text-base));
+    box-shadow: var(--ui-shadow-xs);
+    transition:
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      background-color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  :where(.dark, [data-theme-mode="dark"]) .ui-picker-field {
+    --ui-input-bg: color-mix(in oklch, var(--ui-foreground) 5%, transparent);
+    box-shadow: none;
+  }
+  .ui-picker-field-sm { --ui-input-h: 2rem; --ui-input-fs: var(--text-sm); --ui-input-px: 0.625rem; }
+  .ui-picker-field-lg { --ui-input-h: 2.75rem; --ui-input-fs: var(--text-md); --ui-input-px: 1rem; --ui-input-r: var(--radius-lg); }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ui-picker-field:hover:not([data-disabled], [data-invalid], [data-state="open"]) {
+      --ui-input-border: color-mix(in oklch, var(--ui-border-strong) 55%, var(--ui-foreground));
+    }
+  }
+
+  /* Open, or keyboard focus on the trigger / typing in the input */
+  .ui-picker-field[data-state="open"] {
+    --ui-input-border: var(--ui-ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 25%, transparent);
+  }
+  .ui-picker-field:has(> .ui-picker-input:focus) {
+    --ui-input-border: var(--ui-ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 25%, transparent);
+  }
+  .ui-picker-field:has(> .ui-picker-trigger:focus-visible) {
+    --ui-input-border: var(--ui-ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent);
+  }
+
+  .ui-picker-field[data-invalid] { --ui-input-border: var(--ui-destructive); }
+  .ui-picker-field[data-invalid][data-state="open"],
+  .ui-picker-field[data-invalid]:has(> .ui-picker-input:focus),
+  .ui-picker-field[data-invalid]:has(> .ui-picker-trigger:focus-visible) {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-destructive) 25%, transparent);
+  }
+
+  .ui-picker-field[data-disabled] { opacity: 0.5; cursor: not-allowed; }
+
+  /* Trigger: the whole field is the button */
+  .ui-picker-trigger {
+    display: flex;
+    flex: 1 1 0%;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    height: 100%;
+    padding-inline: var(--ui-input-px, 0.75rem);
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ui-picker-trigger:disabled { cursor: not-allowed; }
+  .ui-picker-icon { flex-shrink: 0; width: 1rem; height: 1rem; color: var(--ui-muted-foreground); }
+  .ui-picker-value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .ui-picker-value[data-placeholder] { color: var(--ui-muted-foreground); }
+
+  /* Typeable input */
+  .ui-picker-input {
+    flex: 1 1 0%;
+    min-width: 0;
+    height: 100%;
+    padding-inline: var(--ui-input-px, 0.75rem) 0.5rem;
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    outline: none;
+  }
+  .ui-picker-input::placeholder { color: var(--ui-muted-foreground); opacity: 1; }
+  .ui-picker-input:disabled { cursor: not-allowed; }
+  .ui-picker-field > .ui-input-action[data-state="open"] { color: var(--ui-foreground); }
+
+  /* iOS Safari zooms the page when a focused field is under 16px */
+  @media (pointer: coarse) {
+    .ui-picker-field { font-size: 1rem; }
+  }
+
+  /* ---- Panel: shared by every picker ---------------------------------- */
+  .ui-picker-panel {
+    width: max-content;
+    max-width: calc(100vw - 1rem);
+    padding: 0;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background: var(--ui-surface-raised);
+    color: var(--ui-surface-raised-foreground);
+    box-shadow: var(--ui-shadow-lg);
+    font-size: var(--text-base);
+    outline: none;
+  }
+  .ui-picker-panel[data-state="open"] { animation: ui-pop-in var(--ui-duration) var(--ui-ease-out) both; }
+  .ui-picker-panel[data-state="closed"] { animation: ui-pop-out var(--ui-duration-exit) var(--ui-ease-in) both; pointer-events: none; }
+  /* Narrow touch screens: shrink the day cells so seven columns fit */
+  @media (max-width: 22.5rem) {
+    .ui-picker-panel .ui-calendar { --ui-cal-cell: calc((100vw - 3.5rem) / 7); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ui-picker-panel[data-state="open"] { animation: ui-fade-in var(--ui-duration-fast) linear both; }
+  }
+
+  /* ---- Range panel ------------------------------------------------------ */
+  .ui-daterange { display: flex; }
+  .ui-daterange-main { min-width: 0; display: flex; flex-direction: column; }
+
+  .ui-daterange-presets {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: 0.125rem;
+    min-width: 9.5rem;
+    padding: 0.75rem;
+    border-inline-end: 1px solid var(--ui-border);
+  }
+  .ui-daterange-preset {
+    height: 2rem;
+    padding-inline: 0.625rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--ui-foreground);
+    font: inherit;
+    text-align: start;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-daterange-preset[aria-pressed="true"] {
+    background-color: var(--ui-accent);
+    color: var(--ui-accent-foreground);
+    font-weight: 500;
+  }
+  .ui-daterange-preset:focus-visible { box-shadow: inset 0 0 0 2px color-mix(in oklch, var(--ui-ring) 70%, transparent); }
+  .ui-daterange-preset:disabled { opacity: 0.4; cursor: not-allowed; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-daterange-preset:hover:not(:disabled) { background-color: var(--ui-accent); color: var(--ui-accent-foreground); }
+  }
+  @media (pointer: coarse) {
+    .ui-daterange-preset { height: 2.75rem; }
+  }
+
+  .ui-daterange-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-top: 1px solid var(--ui-border);
+  }
+  .ui-daterange-summary {
+    flex: 1 1 0%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  .ui-daterange-summary:not([data-empty]) { color: var(--ui-foreground); }
+
+  /* Phones: presets become a scrolling row above the calendar */
+  @media (max-width: 39.99rem) {
+    .ui-daterange { flex-direction: column; }
+    .ui-daterange-presets {
+      flex-direction: row;
+      min-width: 0;
+      padding: 0.5rem 0.75rem;
+      overflow-x: auto;
+      /* the row never widens the panel: the calendar decides the width */
+      contain: inline-size;
+      border-inline-end: 0;
+      border-bottom: 1px solid var(--ui-border);
+      scrollbar-width: none;
+    }
+    .ui-daterange-presets::-webkit-scrollbar { display: none; }
+    .ui-daterange-preset { flex-shrink: 0; }
+  }
+}

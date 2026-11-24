@@ -1,0 +1,35 @@
+/* ==========================================================================
+   Accent presets — swap the brand colour only.
+   <html data-accent="violet|blue|emerald|rose|amber|orange">, or on any
+   subtree. No attribute (or "neutral") keeps the monochrome default.
+
+   Each accent has a fill (buttons, switches: ≥ 4.5:1 under its foreground)
+   and a text colour (links, soft buttons: ≥ 4.5:1 on the page background).
+   ========================================================================== */
+
+[data-accent="violet"] { --ui-accent-fill: var(--ui-violet-600); --ui-accent-text-light: var(--ui-violet-700); --ui-accent-text-dark: var(--ui-violet-300); }
+[data-accent="blue"] { --ui-accent-fill: var(--ui-blue-600); --ui-accent-text-light: var(--ui-blue-700); --ui-accent-text-dark: var(--ui-blue-300); }
+[data-accent="emerald"] { --ui-accent-fill: var(--ui-emerald-600); --ui-accent-text-light: var(--ui-emerald-700); --ui-accent-text-dark: var(--ui-emerald-300); }
+[data-accent="rose"] { --ui-accent-fill: var(--ui-rose-600); --ui-accent-text-light: var(--ui-rose-700); --ui-accent-text-dark: var(--ui-rose-300); }
+[data-accent="orange"] { --ui-accent-fill: var(--ui-orange-600); --ui-accent-text-light: var(--ui-orange-700); --ui-accent-text-dark: var(--ui-orange-300); }
+[data-accent="amber"] { --ui-accent-fill: var(--ui-amber-500); --ui-accent-text-light: var(--ui-amber-700); --ui-accent-text-dark: var(--ui-amber-300); }
+
+[data-accent]:not([data-accent="neutral"]) {
+  --ui-primary: var(--ui-accent-fill);
+  --ui-primary-foreground: var(--ui-gray-0);
+  --ui-primary-text: var(--ui-accent-text-light);
+  --ui-ring: color-mix(in oklch, var(--ui-accent-fill) 70%, var(--ui-background));
+  --ui-control-on: var(--ui-accent-fill);
+  --ui-control-glyph: var(--ui-gray-0);
+}
+
+.dark[data-accent]:not([data-accent="neutral"]),
+.dark [data-accent]:not([data-accent="neutral"]) {
+  --ui-primary-text: var(--ui-accent-text-dark);
+}
+
+/* Amber is light: dark text on top of it */
+[data-accent="amber"][data-accent] {
+  --ui-primary-foreground: var(--ui-gray-900);
+  --ui-control-glyph: var(--ui-gray-900);
+}

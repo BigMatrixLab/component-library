@@ -1,0 +1,74 @@
+/* Pagination --------------------------------------------------------------
+   <nav class="ui-pagination" aria-label="Pagination">
+     <ul class="ui-pagination-content">
+       <li class="ui-pagination-item">
+         <a|button class="ui-pagination-link" aria-current="page" data-active>   32px square
+         <a|button class="ui-pagination-link ui-pagination-link-wide">            Previous / Next
+         <span class="ui-pagination-ellipsis">
+     <span class="ui-pagination-status">Page <strong>3</strong> of 12</span>
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-pagination { display: flex; justify-content: center; }
+  .ui-pagination-content { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+  .ui-pagination-item { display: inline-flex; }
+
+  .ui-pagination-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    min-width: 2rem;
+    height: 2rem;
+    padding-inline: 0.25rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--ui-foreground);
+    font-size: var(--text-base);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      color var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  .ui-pagination-link-wide { padding-inline: 0.625rem; }
+  .ui-pagination-link-wide:has(> .ui-icon:first-child) { padding-inline-start: 0.5rem; }
+  .ui-pagination-link-wide:has(> .ui-icon:last-child) { padding-inline-end: 0.5rem; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-pagination-link:not([data-active]):not([data-disabled]):hover { background: var(--ui-accent); }
+  }
+  .ui-pagination-link:not([data-disabled]):active { transform: scale(0.97); }
+  .ui-pagination-link[data-active] {
+    border-color: var(--ui-border-strong);
+    background: var(--ui-surface-raised);
+    box-shadow: var(--ui-shadow-xs);
+  }
+  .ui-pagination-link[data-disabled] { opacity: 0.45; cursor: not-allowed; }
+  .ui-pagination-link:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+
+  /* On phones the Previous / Next labels give way to their arrows */
+  @media (max-width: 479px) {
+    .ui-pagination-link-wide .ui-pagination-label { display: none; }
+    .ui-pagination-link-wide { padding-inline: 0; width: 2rem; }
+  }
+
+  .ui-pagination-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    color: var(--ui-muted-foreground);
+  }
+
+  .ui-pagination-status { font-size: var(--text-base); color: var(--ui-muted-foreground); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ui-pagination-status strong { color: var(--ui-foreground); font-weight: 500; }
+}

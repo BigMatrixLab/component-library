@@ -1,0 +1,129 @@
+/* Stepper -----------------------------------------------------------------
+   <ol class="ui-stepper" data-orientation="horizontal|vertical">
+     <li class="ui-stepper-item" data-state="complete|current|upcoming">
+       <button|div class="ui-stepper-trigger" aria-current="step">
+         <span class="ui-stepper-indicator" data-state>  number, or a check that draws in
+         <div class="ui-stepper-text"><span class="ui-stepper-title"><span class="ui-stepper-description">
+       <div class="ui-stepper-separator" data-state="complete|incomplete">   fills on the smooth spring
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-stepper {
+    --ui-stepper-size: 1.75rem;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+  }
+  .ui-stepper[data-orientation="vertical"] { flex-direction: column; align-items: stretch; width: auto; }
+
+  .ui-stepper-item { display: flex; align-items: center; flex: 1 1 auto; min-width: 0; gap: 0.75rem; }
+  .ui-stepper-item:last-child { flex: 0 0 auto; }
+  .ui-stepper-item[data-orientation="vertical"] { flex-direction: column; align-items: stretch; gap: 0.375rem; flex: 0 0 auto; }
+
+  .ui-stepper-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 0;
+    padding: 0.25rem;
+    margin: -0.25rem;
+    border-radius: var(--radius-md);
+    color: inherit;
+    text-align: start;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button.ui-stepper-trigger { cursor: pointer; }
+  button.ui-stepper-trigger:disabled { cursor: not-allowed; opacity: 0.5; }
+  button.ui-stepper-trigger:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+
+  .ui-stepper-indicator {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--ui-stepper-size);
+    height: var(--ui-stepper-size);
+    border: 1.5px solid var(--ui-border-strong);
+    border-radius: 999px;
+    background: var(--ui-surface);
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    transition: background-color var(--ui-duration) var(--ui-ease-standard),
+      border-color var(--ui-duration) var(--ui-ease-standard),
+      color var(--ui-duration) var(--ui-ease-standard),
+      box-shadow var(--ui-duration) var(--ui-ease-standard);
+  }
+  .ui-stepper-indicator[data-state="current"] {
+    border-color: var(--ui-primary);
+    color: var(--ui-foreground);
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--ui-primary) 14%, transparent);
+  }
+  .ui-stepper-indicator[data-state="complete"] {
+    border-color: var(--ui-primary);
+    background: var(--ui-primary);
+    color: var(--ui-primary-foreground);
+  }
+  .ui-stepper-check path {
+    --ui-dash: 1;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    animation: ui-draw 320ms var(--ui-ease-out) 60ms backwards;
+  }
+
+  .ui-stepper-text { display: grid; min-width: 0; gap: 0.0625rem; }
+  .ui-stepper-title { font-size: var(--text-base); font-weight: 500; line-height: 1.25rem; color: var(--ui-muted-foreground); transition: color var(--ui-duration-fast) var(--ui-ease-standard); }
+  .ui-stepper-item[data-state="current"] .ui-stepper-title,
+  .ui-stepper-item[data-state="complete"] .ui-stepper-title { color: var(--ui-foreground); }
+  .ui-stepper-description { font-size: var(--text-sm); line-height: 1.125rem; color: var(--ui-muted-foreground); }
+
+  @media (hover: hover) and (pointer: fine) {
+    button.ui-stepper-trigger:not(:disabled):hover .ui-stepper-title { color: var(--ui-foreground); }
+  }
+
+  /* The line to the next step */
+  .ui-stepper-separator {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 1.5rem;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--ui-border);
+    overflow: hidden;
+  }
+  .ui-stepper-separator::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--ui-primary);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--ui-spring-smooth-duration) var(--ui-spring-smooth);
+  }
+  .ui-stepper-separator[data-state="complete"]::after { transform: scaleX(1); }
+  .ui-stepper-separator:dir(rtl)::after { transform-origin: right center; }
+
+  .ui-stepper-item[data-orientation="vertical"] > .ui-stepper-separator {
+    flex: none;
+    width: 2px;
+    height: 1.75rem;
+    min-width: 0;
+    margin-inline-start: calc(var(--ui-stepper-size) / 2 - 1px);
+  }
+  .ui-stepper-item[data-orientation="vertical"] > .ui-stepper-separator::after {
+    transform: scaleY(0);
+    transform-origin: center top;
+  }
+  .ui-stepper-item[data-orientation="vertical"] > .ui-stepper-separator[data-state="complete"]::after { transform: scaleY(1); }
+
+  /* Phones: only the current step keeps its text, so a horizontal stepper fits */
+  @media (max-width: 639px) {
+    .ui-stepper[data-orientation="horizontal"] .ui-stepper-item:not([data-state="current"]) .ui-stepper-text { display: none; }
+  }
+}

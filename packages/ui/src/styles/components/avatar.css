@@ -1,0 +1,87 @@
+/* Avatar ------------------------------------------------------------------
+   .ui-avatar  + size: -xs -sm -lg -xl (md default; inherited from a group)
+               + -rounded (rounded square)
+   Parts: .ui-avatar-image (data-state loading|loaded), .ui-avatar-fallback,
+          .ui-avatar-status[data-status="online|away|busy|offline"]
+   Group: .ui-avatar-group (+ -xs … -xl) overlaps its avatars with a ring in
+          --ui-avatar-ring (default: the page background).
+   Size lives in --ui-avatar-size so a group can set it for every child.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-avatar {
+    position: relative;
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: stretch;
+    width: var(--ui-avatar-size, 2.5rem);
+    height: var(--ui-avatar-size, 2.5rem);
+    border-radius: 9999px;
+    vertical-align: middle;
+    font-size: max(0.75rem, calc(var(--ui-avatar-size, 2.5rem) * 0.36));
+    line-height: 1;
+    user-select: none;
+  }
+  .ui-avatar-xs { --ui-avatar-size: 1.5rem; }
+  .ui-avatar-sm { --ui-avatar-size: 2rem; }
+  .ui-avatar-md { --ui-avatar-size: 2.5rem; }
+  .ui-avatar-lg { --ui-avatar-size: 3rem; }
+  .ui-avatar-xl { --ui-avatar-size: 4rem; }
+  .ui-avatar-rounded { border-radius: calc(var(--ui-avatar-size, 2.5rem) * 0.28); }
+
+  /* Image and fallback share one grid cell; the image sits on top */
+  .ui-avatar-image,
+  .ui-avatar-fallback { grid-area: 1 / 1; width: 100%; height: 100%; border-radius: inherit; }
+  .ui-avatar-image { position: relative; z-index: 1; object-fit: cover; }
+  .ui-avatar-fallback {
+    display: grid;
+    place-items: center;
+    background-color: var(--ui-secondary);
+    color: var(--ui-secondary-foreground);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .ui-avatar-fallback > svg { width: 50%; height: 50%; }
+  /* Once the picture has loaded, hide the fallback so a transparent image is not tinted */
+  .ui-avatar:has(> .ui-avatar-image[data-state="loaded"]) > .ui-avatar-fallback { visibility: hidden; }
+
+  /* Hairline over the picture so light photos keep an edge */
+  .ui-avatar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--ui-foreground) 10%, transparent);
+    pointer-events: none;
+  }
+
+  /* Presence dot */
+  .ui-avatar-status {
+    --ui-avatar-status-color: var(--ui-muted-foreground);
+    position: absolute;
+    z-index: 3;
+    inset-inline-end: 0;
+    inset-block-end: 0;
+    width: max(0.5rem, calc(var(--ui-avatar-size, 2.5rem) * 0.27));
+    height: max(0.5rem, calc(var(--ui-avatar-size, 2.5rem) * 0.27));
+    border-radius: 9999px;
+    background-color: var(--ui-avatar-status-color);
+    box-shadow: 0 0 0 2px var(--ui-avatar-ring, var(--ui-background));
+  }
+  .ui-avatar-status[data-status="online"] { --ui-avatar-status-color: var(--ui-success); }
+  .ui-avatar-status[data-status="away"] { --ui-avatar-status-color: var(--ui-warning); }
+  .ui-avatar-status[data-status="busy"] { --ui-avatar-status-color: var(--ui-destructive); }
+  .ui-avatar:not(.ui-avatar-rounded) > .ui-avatar-status { inset-inline-end: 2%; inset-block-end: 2%; }
+
+  /* Group */
+  .ui-avatar-group { display: inline-flex; align-items: center; isolation: isolate; }
+  .ui-avatar-group-xs { --ui-avatar-size: 1.5rem; }
+  .ui-avatar-group-sm { --ui-avatar-size: 2rem; }
+  .ui-avatar-group-md { --ui-avatar-size: 2.5rem; }
+  .ui-avatar-group-lg { --ui-avatar-size: 3rem; }
+  .ui-avatar-group-xl { --ui-avatar-size: 4rem; }
+  .ui-avatar-group > .ui-avatar { box-shadow: 0 0 0 2px var(--ui-avatar-ring, var(--ui-background)); }
+  .ui-avatar-group > .ui-avatar + .ui-avatar { margin-inline-start: calc(var(--ui-avatar-size, 2.5rem) * -0.28); }
+}
