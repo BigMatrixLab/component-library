@@ -193,7 +193,7 @@ export interface SelectTriggerProps extends ButtonHTMLAttributes<HTMLButtonEleme
 
 /** The control that shows the current value and opens the list. Looks like <Input>. */
 export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(function SelectTrigger(
-  { size = 'md', placeholder, className, children, id, required, disabled, onClick, onKeyDown, onBlur, ...props },
+  { size = 'md', placeholder, className, children, id, required, disabled, onClick, onKeyDown, onKeyUp, onBlur, ...props },
   forwardedRef,
 ) {
   const ctx = useSelectContext('SelectTrigger');
@@ -313,6 +313,11 @@ export const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(f
         else ctx.openWith('selected');
       }}
       onKeyDown={handleKeyDown}
+      onKeyUp={(e) => {
+        onKeyUp?.(e);
+        // Space clicks a button on keyup; the keydown already handled it
+        if (e.key === ' ') e.preventDefault();
+      }}
       onBlur={(e) => {
         onBlur?.(e);
         if (ctx.open) ctx.setOpen(false);

@@ -54,8 +54,8 @@ export function Sparkline({
     () => data.map((d) => (typeof d === 'number' ? d : toNumber(d[valueKey]))).filter((v): v is number => v !== null),
     [data, valueKey],
   );
-  const first = values[0];
-  const last = values[values.length - 1];
+  const first = values[0] ?? 0;
+  const last = values[values.length - 1] ?? 0;
   const stroke = trend && values.length > 1 && last !== first ? (last > first ? 'var(--ui-success)' : 'var(--ui-destructive)') : resolveColor(color, 0);
   const fmt = createValueFormatter(valueFormat);
   const name = rest['aria-label'] ?? (values.length ? `Trend, ${values.length} points, from ${fmt(first)} to ${fmt(last)}.` : 'No data');
@@ -148,7 +148,7 @@ function SparkSvg({
           </>
         )}
         <path d={linePath(pts, curve)} fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" data-draw="" />
-        {dot && <circle className="ui-sparkline-dot" cx={lastPt.x} cy={lastPt.y} r={2.5} fill={stroke} />}
+        {dot && lastPt && <circle className="ui-sparkline-dot" cx={lastPt.x} cy={lastPt.y} r={2.5} fill={stroke} />}
       </>
     );
   }

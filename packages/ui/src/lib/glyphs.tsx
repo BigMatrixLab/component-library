@@ -1,5 +1,7 @@
 import type { SVGProps } from 'react';
 
+type GlyphProps = Omit<SVGProps<SVGSVGElement>, 'ref'>;
+
 /**
  * Small motion glyphs shared by the morphing buttons. Styles live in
  * styles/components/action-button.css (`ui-glyph-*`).
@@ -11,7 +13,7 @@ export function SpinnerGlyph({ className }: { className?: string }) {
 }
 
 /** A check that draws itself (stroke-dashoffset). */
-export function CheckGlyph(props: SVGProps<SVGSVGElement>) {
+export function CheckGlyph(props: GlyphProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -33,7 +35,7 @@ export function CheckGlyph(props: SVGProps<SVGSVGElement>) {
 }
 
 /** A cross that pops in. */
-export function CrossGlyph(props: SVGProps<SVGSVGElement>) {
+export function CrossGlyph(props: GlyphProps) {
   return (
     <svg
       viewBox="0 0 24 24"

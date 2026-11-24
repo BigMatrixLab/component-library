@@ -1,4 +1,4 @@
-import { forwardRef, type HTMLAttributes } from 'react';
+import { cloneElement, forwardRef, isValidElement, type HTMLAttributes, type ReactElement, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Slot } from '../../lib/slot';
 
@@ -45,9 +45,20 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 ) {
   const classes = badgeClassName({ variant, size, solid, className });
   if (asChild) {
+    let content: ReactNode = children;
+    // Keep the status dot: prepend it to the child's own content.
+    if ((dot || live) && isValidElement(children)) {
+      const child = children as ReactElement<{ children?: ReactNode }>;
+      content = cloneElement(
+        child,
+        undefined,
+        <span className="ui-badge-dot" aria-hidden="true" />,
+        child.props.children,
+      );
+    }
     return (
       <Slot ref={ref as never} className={classes} data-live={live || undefined} {...props}>
-        {children}
+        {content}
       </Slot>
     );
   }

@@ -57,11 +57,11 @@ describe('bandScale', () => {
 describe('stackSeries', () => {
   it('stacks positives up and negatives down', () => {
     const out = stackSeries([{ a: 3, b: 2, c: -4 }, { a: 1, b: -1, c: -2 }], ['a', 'b', 'c']);
-    expect(out[0][0]).toEqual({ lo: 0, hi: 3 });
-    expect(out[1][0]).toEqual({ lo: 3, hi: 5 });
-    expect(out[2][0]).toEqual({ lo: -4, hi: 0 });
-    expect(out[1][1]).toEqual({ lo: -1, hi: 0 });
-    expect(out[2][1]).toEqual({ lo: -3, hi: -1 });
+    expect(out[0]![0]).toEqual({ lo: 0, hi: 3 });
+    expect(out[1]![0]).toEqual({ lo: 3, hi: 5 });
+    expect(out[2]![0]).toEqual({ lo: -4, hi: 0 });
+    expect(out[1]![1]).toEqual({ lo: -1, hi: 0 });
+    expect(out[2]![1]).toEqual({ lo: -3, hi: -1 });
   });
 });
 

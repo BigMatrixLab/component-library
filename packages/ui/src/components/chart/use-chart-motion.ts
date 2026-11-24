@@ -110,7 +110,7 @@ export function useTweenedNumbers(target: number[], enabled: boolean, duration =
     const tick = (t: number) => {
       t0 = t0 || t;
       const k = easeOut(Math.min(1, (t - t0) / duration));
-      const next = target.map((to, i) => (Number.isNaN(to) || Number.isNaN(from[i]) ? to : from[i] + (to - from[i]) * k));
+      const next = target.map((to, i) => (Number.isNaN(to) || Number.isNaN(from[i]) ? to : from[i]! + (to - from[i]!) * k));
       shown.current = next;
       setValue(next);
       if (t - t0 < duration) raf = requestAnimationFrame(tick);

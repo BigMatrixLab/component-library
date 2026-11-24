@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "app/docs/components/text-shimmer/page.tsx"
+        ],
+        "createdAt": "2026-11-24T18:07:15.887Z",
+        "reason": "false positive: docs prose describing the text-shimmer technique, no styling"
+      }
+    ]
+  }
+}

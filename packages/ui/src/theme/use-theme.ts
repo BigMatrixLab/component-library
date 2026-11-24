@@ -1,13 +1,15 @@
 'use client';
 
 import { useCallback, useEffect, useSyncExternalStore } from 'react';
-import { THEME_STORAGE } from './theme-script';
+import { THEME_STORAGE, type ThemePack } from './theme-script';
 
+export type { ThemePack } from './theme-script';
 export type ThemeMode = 'light' | 'dark' | 'system';
 export type ThemeAccent = 'neutral' | 'violet' | 'blue' | 'emerald' | 'rose' | 'amber' | 'orange';
 export const THEME_ACCENTS: ThemeAccent[] = ['neutral', 'violet', 'blue', 'emerald', 'rose', 'amber', 'orange'];
 
 const EVENT = 'ui:theme';
+const PACK_NAME = /^[a-z0-9-]+$/;
 
 const read = (key: string) => {
   try {
@@ -26,10 +28,14 @@ const write = (key: string, value: string | null) => {
 };
 const systemDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+/** Last pack chosen in this page — keeps working when storage is blocked. */
+let sessionPack: string | null = null;
+
 function apply() {
   const root = document.documentElement;
   const mode = (read(THEME_STORAGE.mode) as ThemeMode | null) ?? 'system';
   const accent = read(THEME_STORAGE.accent);
+  const pack = read(THEME_STORAGE.pack) ?? sessionPack;
   // Swap without every element transitioning its colours
   const style = document.createElement('style');
   style.textContent = '*,*::before,*::after{transition:none!important}';
@@ -37,6 +43,11 @@ function apply() {
   root.classList.toggle('dark', mode === 'dark' || (mode === 'system' && systemDark()));
   if (accent && accent !== 'neutral') root.setAttribute('data-accent', accent);
   else root.removeAttribute('data-accent');
+  // Nothing chosen → keep a pack the server rendered on <html>
+  if (pack && PACK_NAME.test(pack)) {
+    if (pack === 'neutral') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', pack);
+  }
   void root.offsetHeight;
   requestAnimationFrame(() => style.remove());
   window.dispatchEvent(new Event(EVENT));
@@ -51,17 +62,18 @@ function subscribe(cb: () => void) {
   };
 }
 
+const currentPack = () => read(THEME_STORAGE.pack) ?? sessionPack ?? document.documentElement.getAttribute('data-theme') ?? 'neutral';
 const snapshot = () =>
-  `${read(THEME_STORAGE.mode) ?? 'system'}|${read(THEME_STORAGE.accent) ?? 'neutral'}|${document.documentElement.classList.contains('dark') ? 'dark' : 'light'}`;
-const serverSnapshot = () => 'system|neutral|light';
+  `${read(THEME_STORAGE.mode) ?? 'system'}|${read(THEME_STORAGE.accent) ?? 'neutral'}|${document.documentElement.classList.contains('dark') ? 'dark' : 'light'}|${currentPack()}`;
+const serverSnapshot = () => 'system|neutral|light|neutral';
 
 /**
  * Read and change the theme from any client component.
- *   const { mode, resolvedMode, accent, setMode, setAccent, toggle } = useTheme();
+ *   const { mode, resolvedMode, accent, pack, setMode, setAccent, setPack, toggle } = useTheme();
  */
 export function useTheme() {
   const snap = useSyncExternalStore(subscribe, snapshot, serverSnapshot);
-  const [mode, accent, resolvedMode] = snap.split('|') as [ThemeMode, ThemeAccent, 'light' | 'dark'];
+  const [mode, accent, resolvedMode, pack] = snap.split('|') as [ThemeMode, ThemeAccent, 'light' | 'dark', ThemePack];
 
   // Follow the OS while in system mode
   useEffect(() => {
@@ -79,7 +91,15 @@ export function useTheme() {
     write(THEME_STORAGE.accent, next === 'neutral' ? null : next);
     apply();
   }, []);
+  /** Built-in pack or the name of your own `[data-theme="…"]` pack ([a-z0-9-]). */
+  const setPack = useCallback((next: ThemePack | (string & {})) => {
+    if (!PACK_NAME.test(next)) return;
+    // `neutral` is stored explicitly: it must also override a pack the server rendered
+    sessionPack = next;
+    write(THEME_STORAGE.pack, next);
+    apply();
+  }, []);
   const toggle = useCallback(() => setMode(resolvedMode === 'dark' ? 'light' : 'dark'), [resolvedMode, setMode]);
 
-  return { mode, resolvedMode, accent, setMode, setAccent, toggle };
+  return { mode, resolvedMode, accent, pack, setMode, setAccent, setPack, toggle };
 }

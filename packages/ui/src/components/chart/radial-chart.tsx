@@ -76,13 +76,13 @@ export function RadialChart({
       height={h}
       vars={chartVars(cols)}
       legend={legend ?? (data.length > 1 ? 'bottom' : false)}
-      legendItems={data.map((_, i) => ({ key: names[i], label: names[i], color: seriesVar(i), visible: !hidden.has(names[i]) }))}
+      legendItems={data.map((_, i) => ({ key: names[i]!, label: names[i]!, color: seriesVar(i), visible: !hidden.has(names[i]!) }))}
       onLegendToggle={(key) => toggle(key, data.length)}
       className={className}
       table={{
         caption: name,
         columns: [index, valueKey, 'Goal'],
-        rows: data.map((row, i) => [names[i], fmt(toNumber(row[valueKey]) ?? 0), fmt(max)]),
+        rows: data.map((row, i) => [names[i]!, fmt(toNumber(row[valueKey]) ?? 0), fmt(max)]),
       }}
     >
       {(width) => (
@@ -132,7 +132,7 @@ function RadialPlot(p: RadialPlotProps) {
   const sweep = useSweep(p.animate);
   const rings = p.rows
     .map((row, i) => ({ i, value: toNumber(row[p.valueKey]) ?? 0 }))
-    .filter((r) => !p.hidden.has(p.names[r.i]));
+    .filter((r) => !p.hidden.has(p.names[r.i]!));
   const n = rings.length;
 
   const outerR = p.semicircle ? Math.min(p.width / 2 - 4, p.height - 14) : Math.min(p.width, p.height) / 2 - 4;
@@ -160,8 +160,8 @@ function RadialPlot(p: RadialPlotProps) {
     label = p.names[current.i];
     value = p.fmt(current.value);
   } else if (n === 1) {
-    label = p.centerLabel ?? p.names[rings[0].i];
-    value = p.centerValue ?? p.fmt(rings[0].value);
+    label = p.centerLabel ?? p.names[rings[0]!.i];
+    value = p.centerValue ?? p.fmt(rings[0]!.value);
   }
   const showCenter = (value != null || label != null) && (p.semicircle || outerR - n * (stroke + gap) > 28);
   const tipX = active.source === 'pointer' ? active.x : cx;
@@ -209,7 +209,7 @@ function RadialPlot(p: RadialPlotProps) {
       )}
       {p.showTooltip && n > 1 && (
         <ChartTooltip visible={!!current} x={tipX} y={tipY} width={p.width} height={p.height}>
-          {current && <TooltipContent rows={[{ color: seriesVar(current.i), name: p.names[current.i], value: `${p.fmt(current.value)} of ${p.fmt(p.max)}` }]} />}
+          {current && <TooltipContent rows={[{ color: seriesVar(current.i), name: p.names[current.i]!, value: `${p.fmt(current.value)} of ${p.fmt(p.max)}` }]} />}
         </ChartTooltip>
       )}
       <div className="ui-chart-sr" role="status" aria-live="polite">

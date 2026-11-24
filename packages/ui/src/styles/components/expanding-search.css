@@ -1,1 +1,149 @@
-/* expanding-search — being built */
+/* Expanding search ------------------------------------------------------------
+   <div class="ui-xsearch [ui-xsearch-sm|lg]" role="search" style="--ui-xsearch-w: 280px">
+     <div class="ui-xsearch-field" data-state="closed|open">
+       <button class="ui-xsearch-toggle">search icon</button>
+       <input class="ui-xsearch-input" type="search">
+       <button class="ui-xsearch-clear">x</button>  <kbd class="ui-xsearch-hint">⌘K</kbd>
+     </div>
+     <div class="ui-xsearch-results" data-state="open|closed">…</div>
+   </div>
+   Closed it is a square icon button (height × height); open it is --ui-xsearch-w wide.
+   The width transitions on --ui-spring-smooth; the input stays hidden (and out of the
+   tab order) until the field is open.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-xsearch {
+    --ui-xsearch-h: 2.25rem;
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: middle;
+  }
+  .ui-xsearch-sm { --ui-xsearch-h: 2rem; }
+  .ui-xsearch-lg { --ui-xsearch-h: 2.75rem; }
+
+  .ui-xsearch-field {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    width: var(--ui-xsearch-h);
+    max-width: calc(100vw - 2rem);
+    height: var(--ui-xsearch-h);
+    overflow: hidden;
+    border: 1px solid var(--ui-border-strong);
+    border-radius: var(--radius-md);
+    background-color: var(--ui-background);
+    color: var(--ui-foreground);
+    box-shadow: var(--ui-shadow-xs);
+    transition:
+      width var(--ui-spring-smooth-duration) var(--ui-spring-smooth),
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  .ui-xsearch-lg .ui-xsearch-field { border-radius: var(--radius-lg); }
+  .ui-xsearch-field[data-state="open"] { width: var(--ui-xsearch-w, 17.5rem); }
+  .ui-xsearch-field[data-state="closed"]:active { transform: scale(0.94); }
+  .dark .ui-xsearch-field,
+  [data-theme-mode="dark"] .ui-xsearch-field { box-shadow: none; }
+  .ui-xsearch-field:has(.ui-xsearch-toggle:focus-visible),
+  .ui-xsearch-field:focus-within[data-state="open"] {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-xsearch-field[data-state="closed"]:hover { background-color: var(--ui-accent); }
+  }
+
+  .ui-xsearch-toggle,
+  .ui-xsearch-clear {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ui-muted-foreground);
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ui-xsearch-toggle { width: calc(var(--ui-xsearch-h) - 2px); height: 100%; }
+  .ui-xsearch-field[data-state="closed"] .ui-xsearch-toggle { color: var(--ui-foreground); }
+  .ui-xsearch-field[data-state="open"] .ui-xsearch-toggle { cursor: text; }
+  .ui-xsearch-clear {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-inline-end: 0.375rem;
+    border-radius: var(--radius-sm);
+    animation: ui-pop-in var(--ui-duration-fast) var(--ui-ease-out) both;
+    transition: background-color var(--ui-duration-fast) var(--ui-ease-standard), color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-xsearch-clear:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-xsearch-clear:hover { background-color: var(--ui-accent); color: var(--ui-foreground); }
+  }
+
+  .ui-xsearch-input {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0 0.5rem 0 0;
+    border: 0;
+    background: transparent;
+    color: var(--ui-foreground);
+    font: inherit;
+    font-size: var(--text-base);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    /* Hidden (and unfocusable) once the fold-back has finished */
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity var(--ui-duration-fast) var(--ui-ease-standard),
+      visibility 0s linear var(--ui-spring-smooth-duration);
+  }
+  .ui-xsearch-input::placeholder { color: var(--ui-muted-foreground); opacity: 1; }
+  .ui-xsearch-input::-webkit-search-decoration,
+  .ui-xsearch-input::-webkit-search-cancel-button,
+  .ui-xsearch-input::-webkit-search-results-button,
+  .ui-xsearch-input::-webkit-search-results-decoration { display: none; -webkit-appearance: none; }
+  .ui-xsearch-field[data-state="open"] .ui-xsearch-input {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 90ms, 0s;
+  }
+  .ui-xsearch-hint { margin-inline-end: 0.5rem; animation: ui-fade-in var(--ui-duration) var(--ui-ease-out) both; }
+
+  /* Results slot */
+  .ui-xsearch-results {
+    --ui-pop-y: -4px;
+    position: absolute;
+    inset-inline: 0;
+    top: calc(100% + 0.375rem);
+    z-index: 30;
+    max-height: 20rem;
+    overflow: auto;
+    padding: 0.25rem;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--ui-surface-raised);
+    color: var(--ui-surface-raised-foreground);
+    box-shadow: var(--ui-shadow-md);
+  }
+  .ui-xsearch-results[data-state="open"] { animation: ui-pop-in var(--ui-duration-slow) var(--ui-ease-out) both; }
+  .ui-xsearch-results[data-state="closed"] {
+    animation: ui-pop-out var(--ui-duration-exit) var(--ui-ease-in) both;
+    pointer-events: none;
+  }
+}
+
+/* Reduced motion: the field opens and closes instantly; the input still appears and takes focus */
+@media (prefers-reduced-motion: reduce) {
+  .ui-xsearch-field[data-state="closed"]:active { transform: none; }
+  .ui-xsearch-input { transition-delay: 0s, 0s; }
+}

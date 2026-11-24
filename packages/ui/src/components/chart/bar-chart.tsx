@@ -75,7 +75,7 @@ export function BarChart({
       table={{
         caption: name,
         columns: [index, ...all.map((s) => s.label)],
-        rows: data.map((row, i) => [labels[i], ...all.map((s) => { const v = toNumber(row[s.key]); return v == null ? '' : fmt(v); })]),
+        rows: data.map((row, i) => [labels[i] ?? '', ...all.map((s) => { const v = toNumber(row[s.key]); return v == null ? '' : fmt(v); })]),
       }}
     >
       {(width) => (
@@ -168,9 +168,9 @@ function BarPlot(p: BarPlotProps) {
   );
 
   const readout = (i: number) => ({
-    label: p.tooltipFormat(indexValue(p.rawData[i], p.index), i),
+    label: p.tooltipFormat(indexValue(p.rawData[i]!, p.index), i),
     rows: p.visible.map((s) => {
-      const v = toNumber(p.rawData[i][s.key]);
+      const v = toNumber(p.rawData[i]![s.key]);
       return { color: seriesVar(s.index), name: s.label, value: v == null ? '—' : p.fmt(v) };
     }),
   });

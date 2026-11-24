@@ -1,0 +1,55 @@
+/* Text shimmer ------------------------------------------------------------
+   <span class="ui-text-shimmer" data-state="active|idle">Thinking…</span>
+   A band of --ui-text-shimmer-highlight sweeps over --ui-text-shimmer-base text,
+   left to right (right to left in RTL), linear, one sweep per --ui-text-shimmer-duration.
+   Gradient + background-clip: text; without support the text is plain base colour.
+   [data-state="idle"]: plain text in the inherited colour.
+   Reduced motion: static text in the base colour, no gradient.
+   Tunable: --ui-text-shimmer-base | -highlight | -duration (2s) | -band (10%, half-width of the band)
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-text-shimmer {
+    --ui-text-shimmer-base: var(--ui-muted-foreground);
+    --ui-text-shimmer-highlight: var(--ui-foreground);
+    --ui-text-shimmer-band: 10%;
+    color: var(--ui-text-shimmer-base);
+  }
+  /* Inline spans need a box of their own for the gradient to span the whole label */
+  .ui-text-shimmer:where(span) { display: inline-block; }
+
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .ui-text-shimmer[data-state="active"] {
+      background-image: linear-gradient(
+        90deg,
+        var(--ui-text-shimmer-base) calc(50% - var(--ui-text-shimmer-band) * 2),
+        var(--ui-text-shimmer-highlight) 50%,
+        var(--ui-text-shimmer-base) calc(50% + var(--ui-text-shimmer-band) * 2)
+      );
+      background-size: 250% 100%;
+      background-repeat: no-repeat;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: ui-text-shimmer var(--ui-text-shimmer-duration, 2s) linear infinite;
+    }
+  }
+  [dir="rtl"] .ui-text-shimmer[data-state="active"] { animation-direction: reverse; }
+
+  .ui-text-shimmer[data-state="idle"] { color: inherit; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-text-shimmer[data-state="active"] {
+      animation: none;
+      background-image: none;
+      -webkit-text-fill-color: currentColor;
+    }
+  }
+}
+
+/* background-position 100% → 0% moves the band from just left of the text to just right of it */
+@keyframes ui-text-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0% 0; }
+}

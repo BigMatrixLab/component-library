@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Button, Icon, cn } from 'ui-kit';
 import { nav } from '@/lib/registry';
-import { AccentPicker, ThemeToggle } from './theme-controls';
+import { AccentPicker, PackPicker, ThemeToggle } from './theme-controls';
 
 export function DocsShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -38,6 +38,7 @@ export function DocsShell({ children }: { children: ReactNode }) {
           <span className="rounded-full border border-border px-1.5 font-mono text-xs font-normal text-muted-foreground">0.0</span>
         </Link>
         <div className="ml-auto flex items-center gap-3">
+          <PackPicker className="hidden md:block" />
           <AccentPicker className="hidden md:flex" />
           <ThemeToggle />
         </div>
@@ -106,6 +107,8 @@ export function DocsShell({ children }: { children: ReactNode }) {
           })}
         </nav>
         <div className="border-t border-border p-4 md:hidden">
+          <p className="mb-2 text-xs font-medium text-muted-foreground">Theme pack</p>
+          <PackPicker className="mb-4" />
           <p className="mb-2 text-xs font-medium text-muted-foreground">Accent</p>
           <AccentPicker />
         </div>

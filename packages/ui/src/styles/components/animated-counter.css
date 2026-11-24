@@ -1,1 +1,67 @@
-/* animated-counter — being built */
+/* Animated counter --------------------------------------------------------
+   .ui-number
+     .ui-number-sr       the plain text for assistive tech
+     .ui-number-visual   aria-hidden row of cells
+       .ui-number-digit > .ui-number-reel (--ui-digit: 0–9) > span × 10
+       .ui-number-symbol  currency, separators, signs, suffixes
+   Each digit column is one line tall and clips its reel; the reel slides on the morph spring.
+   Reduced motion: the global rule in motion.css makes the slide instant.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-number {
+    position: relative;
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ui-number-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .ui-number-visual {
+    display: inline-block;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .ui-number-digit,
+  .ui-number-symbol {
+    display: inline-block;
+    height: 1.15em;
+    vertical-align: top;
+  }
+  .ui-number-symbol { white-space: pre; }
+
+  .ui-number-digit { overflow: hidden; }
+
+  .ui-number-reel {
+    display: flex;
+    flex-direction: column;
+    transform: translateY(calc(var(--ui-digit, 0) * -10%));
+    transition: transform var(--ui-spring-morph-duration) var(--ui-spring-morph);
+    will-change: transform;
+  }
+  .ui-number-reel > span {
+    display: block;
+    height: 1.15em;
+    text-align: center;
+  }
+
+  /* Cells that join when the number grows (999 → 1,000) */
+  .ui-number-digit[data-enter],
+  .ui-number-symbol[data-enter] {
+    animation: ui-number-in var(--ui-duration) var(--ui-ease-out) both;
+  }
+}
+
+@keyframes ui-number-in {
+  from { opacity: 0; transform: translateY(0.3em); filter: blur(var(--ui-blur-subtle)); }
+  to { opacity: 1; transform: none; filter: none; }
+}

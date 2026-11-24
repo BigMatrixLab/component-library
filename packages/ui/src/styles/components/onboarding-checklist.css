@@ -1,0 +1,301 @@
+/* Onboarding checklist -----------------------------------------------------
+   <section class="ui-onboarding-checklist" data-state="open|closed" data-progress="ring|bar"
+            [data-complete] [data-celebrate] aria-labelledby="…title">
+     .ui-onboarding-checklist-header
+       .ui-onboarding-checklist-ring > .ui-progress-circle.ui-progress-circle-sm
+           (> -ring-count "2/5" | svg.ui-onboarding-checklist-ring-check)
+       .ui-onboarding-checklist-heading > h3.-title + p.-description
+       [.ui-btn.ui-onboarding-checklist-dismiss]  button.ui-onboarding-checklist-toggle > .-chevron
+     [.ui-onboarding-checklist-bar > .ui-progress.ui-progress-sm + .-count]
+     .ui-collapse.ui-onboarding-checklist-body > .ui-collapse-inner > ol.ui-onboarding-checklist-steps
+       li.ui-onboarding-checklist-step[data-state="complete|incomplete"][data-current][data-disabled]
+         .-check > input.-input[type=checkbox] + .-indicator > svg path
+         .-step-body > label.-step-title + .-step-description
+         .-step-action
+     span.ui-onboarding-checklist-sr[role=status]
+   Ticking a step: the disc grows on the morph spring, the check draws (transitions,
+   so nothing replays on mount). Finishing: ring pops, a halo spreads, the check in
+   the ring draws, the title rises in — once, while [data-celebrate] is set.
+   ------------------------------------------------------------------------ */
+
+@keyframes ui-onboarding-checklist-pop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes ui-onboarding-checklist-halo {
+  from { box-shadow: 0 0 0 0 color-mix(in oklch, var(--ui-success) 40%, transparent); }
+  to { box-shadow: 0 0 0 14px color-mix(in oklch, var(--ui-success) 0%, transparent); }
+}
+@keyframes ui-onboarding-checklist-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes ui-onboarding-checklist-rise {
+  from { opacity: 0; transform: translateY(6px); filter: blur(var(--ui-blur-subtle)); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+@layer components {
+  .ui-onboarding-checklist {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-xl);
+    background-color: var(--ui-surface);
+    color: var(--ui-surface-foreground);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+
+  /* Header */
+  .ui-onboarding-checklist-header {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 1rem 0.75rem 1rem 1.25rem;
+  }
+  .ui-onboarding-checklist-ring { position: relative; display: inline-grid; flex-shrink: 0; border-radius: 9999px; }
+  .ui-onboarding-checklist-ring::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
+  .ui-onboarding-checklist-ring-count { font-size: 0.6875rem; font-weight: 600; letter-spacing: -0.01em; }
+  .ui-onboarding-checklist-ring-check {
+    display: block;
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: none;
+    stroke: var(--ui-success-text);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+
+  .ui-onboarding-checklist-heading { display: grid; flex: 1 1 auto; gap: 0.125rem; min-width: 0; }
+  .ui-onboarding-checklist-title {
+    margin: 0;
+    font-size: var(--text-md);
+    line-height: var(--text-md--line-height);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ui-surface-foreground);
+  }
+  .ui-onboarding-checklist-description {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    color: var(--ui-muted-foreground);
+  }
+  .ui-onboarding-checklist-dismiss { flex-shrink: 0; }
+
+  .ui-onboarding-checklist-toggle {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--ui-muted-foreground);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-onboarding-checklist-toggle:hover { background-color: var(--ui-accent); color: var(--ui-accent-foreground); }
+  }
+  .ui-onboarding-checklist-toggle:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-onboarding-checklist-chevron { transition: transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy); }
+  .ui-onboarding-checklist-toggle[aria-expanded="true"] .ui-onboarding-checklist-chevron { transform: rotate(180deg); }
+
+  /* Bar layout */
+  .ui-onboarding-checklist-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 1.25rem 1rem;
+    margin-top: -0.25rem;
+  }
+  .ui-onboarding-checklist-count {
+    flex-shrink: 0;
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    font-weight: 500;
+    color: var(--ui-muted-foreground);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Steps */
+  .ui-onboarding-checklist-steps {
+    display: grid;
+    gap: 0.125rem;
+    margin: 0;
+    padding: 0.5rem;
+    border-top: 1px solid var(--ui-border-subtle);
+    list-style: none;
+  }
+  .ui-onboarding-checklist-step {
+    display: grid;
+    grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    /* Concentric with the card: outer radius minus the list padding */
+    border-radius: max(4px, calc(var(--radius-xl) - 0.5rem));
+    transition: background-color var(--ui-duration) var(--ui-ease-standard);
+  }
+  .ui-onboarding-checklist-step[data-current] { background-color: color-mix(in oklch, var(--ui-foreground) 4%, transparent); }
+  .ui-onboarding-checklist-step[data-disabled] { opacity: 0.5; }
+
+  /* The round check: native checkbox on top (invisible), drawn indicator under it */
+  .ui-onboarding-checklist-check {
+    position: relative;
+    display: grid;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.0625rem;
+  }
+  .ui-onboarding-checklist-input {
+    position: absolute;
+    inset: -0.375rem;
+    z-index: 1;
+    width: auto;
+    height: auto;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .ui-onboarding-checklist-input:disabled { cursor: not-allowed; }
+  .ui-onboarding-checklist-indicator {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 1.5px solid var(--ui-border-strong);
+    border-radius: 9999px;
+    color: var(--ui-control-glyph);
+    transition:
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  .ui-onboarding-checklist-indicator::before {
+    content: "";
+    position: absolute;
+    inset: -1.5px;
+    border-radius: inherit;
+    background-color: var(--ui-control-on);
+    transform: scale(0);
+    transition: transform var(--ui-duration-fast) var(--ui-ease-in);
+  }
+  .ui-onboarding-checklist-indicator > svg {
+    position: relative;
+    width: 0.875rem;
+    height: 0.875rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset var(--ui-duration-fast) var(--ui-ease-in);
+  }
+  .ui-onboarding-checklist-step[data-state="complete"] .ui-onboarding-checklist-indicator { border-color: var(--ui-control-on); }
+  /* Ticking: the disc grows on the morph spring, then the check draws */
+  .ui-onboarding-checklist-step[data-state="complete"] .ui-onboarding-checklist-indicator::before {
+    transform: scale(1);
+    transition: transform var(--ui-spring-morph-duration) var(--ui-spring-morph);
+  }
+  .ui-onboarding-checklist-step[data-state="complete"] .ui-onboarding-checklist-indicator > svg {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 320ms var(--ui-ease-out) 90ms;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-onboarding-checklist-check:hover .ui-onboarding-checklist-input:not(:disabled) + .ui-onboarding-checklist-indicator { border-color: var(--ui-ring); }
+    .ui-onboarding-checklist-step[data-state="complete"] .ui-onboarding-checklist-check:hover .ui-onboarding-checklist-indicator { border-color: var(--ui-control-on); }
+  }
+  .ui-onboarding-checklist-input:focus-visible + .ui-onboarding-checklist-indicator {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent);
+  }
+  .ui-onboarding-checklist-input:active:not(:disabled) + .ui-onboarding-checklist-indicator { transform: scale(0.92); }
+
+  .ui-onboarding-checklist-step-body { display: grid; gap: 0.125rem; min-width: 0; }
+  .ui-onboarding-checklist-step-title {
+    font-weight: 500;
+    color: var(--ui-surface-foreground);
+    text-decoration: line-through;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    transition:
+      color var(--ui-duration) var(--ui-ease-standard),
+      text-decoration-color var(--ui-duration) var(--ui-ease-standard);
+  }
+  label.ui-onboarding-checklist-step-title { cursor: pointer; }
+  .ui-onboarding-checklist-step[data-disabled] label.ui-onboarding-checklist-step-title { cursor: not-allowed; }
+  .ui-onboarding-checklist-step[data-state="complete"] .ui-onboarding-checklist-step-title {
+    color: var(--ui-muted-foreground);
+    text-decoration-color: color-mix(in oklch, var(--ui-muted-foreground) 70%, transparent);
+  }
+  .ui-onboarding-checklist-step-description {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    color: var(--ui-muted-foreground);
+  }
+  .ui-onboarding-checklist-step-action {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: center;
+  }
+
+  /* Phones: the action drops under the text */
+  @media (max-width: 30rem) {
+    .ui-onboarding-checklist-step { grid-template-columns: 1.25rem minmax(0, 1fr); }
+    .ui-onboarding-checklist-step-action { grid-column: 2; justify-self: start; margin-top: 0.5rem; }
+  }
+
+  /* Finished: one celebration while [data-celebrate] is set */
+  .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-ring {
+    animation: ui-onboarding-checklist-pop 520ms var(--ui-ease-out) both;
+  }
+  .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-ring::after {
+    animation: ui-onboarding-checklist-halo 900ms var(--ui-ease-out) 120ms both;
+  }
+  .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-ring-check {
+    animation: ui-onboarding-checklist-draw 360ms var(--ui-ease-out) 160ms both;
+  }
+  .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-title,
+  .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-description {
+    animation: ui-onboarding-checklist-rise var(--ui-duration-slow) var(--ui-ease-out) both;
+  }
+  .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-description { animation-delay: var(--ui-stagger); }
+
+  /* Screen-reader only (live region, "Completed" suffix) */
+  .ui-onboarding-checklist-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-ring,
+    .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-ring::after,
+    .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-ring-check,
+    .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-title,
+    .ui-onboarding-checklist[data-celebrate] .ui-onboarding-checklist-description { animation: none; }
+  }
+}

@@ -94,7 +94,12 @@ export const Command = forwardRef<HTMLDivElement, CommandProps>(function Command
       prevSearch.current = search;
       const list = root.querySelector<HTMLElement>('[data-command-list]');
       if (list) list.scrollTop = 0;
-      setActiveId(options[0]?.id ?? null);
+      // The best match overall (groups sit in DOM order, so the first row is not always it)
+      const best = options.reduce<HTMLElement | undefined>(
+        (top, el) => (!top || Number(el.dataset.score ?? 0) > Number(top.dataset.score ?? 0) ? el : top),
+        undefined,
+      );
+      setActiveId(best?.id ?? null);
     } else if (!activeId || !options.some((el) => el.id === activeId)) {
       setActiveId(options[0]?.id ?? null);
     }
@@ -354,6 +359,7 @@ export const CommandItem = forwardRef<HTMLDivElement, CommandItemProps>(function
       aria-selected={active}
       aria-disabled={disabled || undefined}
       data-selected={active ? '' : undefined}
+      data-score={searching ? score : undefined}
       data-disabled={disabled ? '' : undefined}
       className={cn('ui-command-item', className)}
       // Better matches float to the top of their group

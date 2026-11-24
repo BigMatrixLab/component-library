@@ -44,7 +44,7 @@ describe('file-dropzone helpers', () => {
     });
     expect(r.next.map((f) => f.name)).toEqual(['a.pdf', 'b.pdf', 'c.pdf']);
     expect(r.rejected).toHaveLength(1);
-    expect(r.rejected[0].code).toBe('too-many');
+    expect(r.rejected[0]!.code).toBe('too-many');
   });
 
   it('skips files already in the list', () => {

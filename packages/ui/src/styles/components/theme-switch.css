@@ -1,1 +1,103 @@
-/* theme-switch — being built */
+/* Theme switch ----------------------------------------------------------------
+   <div class="ui-theme-switch [ui-theme-switch-sm]" role="radiogroup">
+     <span class="ui-theme-switch-pill">                      ONE pill, glides between options
+     <button class="ui-theme-switch-item" role="radio" aria-checked>icon</button> × 3
+   </div>
+   useIndicator() writes --ui-tab-x/y/w/h on the group; data-ready appears after the first
+   measurement and data-animate two frames later, so the first placement never animates.
+
+   Circular reveal (View Transitions): while a reveal runs, <html data-ui-reveal> switches off
+   the browser's default cross-fade; the new snapshot is clipped by a circle animated from JS.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-theme-switch {
+    --ui-theme-item: 1.75rem;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--ui-border);
+    border-radius: 9999px;
+    background-color: var(--ui-surface-muted);
+  }
+  .ui-theme-switch-sm { --ui-theme-item: 1.5rem; }
+  /* Touch targets: 36px on coarse pointers */
+  @media (pointer: coarse) {
+    .ui-theme-switch { --ui-theme-item: 2.25rem; }
+  }
+
+  .ui-theme-switch-pill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--ui-tab-w, 0px);
+    height: var(--ui-tab-h, 0px);
+    transform: translate(var(--ui-tab-x, 0px), var(--ui-tab-y, 0px));
+    border-radius: inherit;
+    background-color: var(--ui-background);
+    box-shadow: var(--ui-shadow-sm);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .dark .ui-theme-switch-pill,
+  [data-theme-mode="dark"] .ui-theme-switch-pill {
+    background-color: color-mix(in oklch, var(--ui-foreground) 14%, var(--ui-surface-muted));
+    box-shadow: none;
+  }
+  .ui-theme-switch[data-ready] .ui-theme-switch-pill { opacity: 1; }
+  .ui-theme-switch[data-animate] .ui-theme-switch-pill {
+    transition:
+      transform var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      width var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      height var(--ui-spring-morph-duration) var(--ui-spring-morph);
+  }
+
+  .ui-theme-switch-item {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--ui-theme-item);
+    height: var(--ui-theme-item);
+    padding: 0;
+    border: 0;
+    border-radius: 9999px;
+    background: transparent;
+    color: var(--ui-muted-foreground);
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  .ui-theme-switch-item[aria-checked="true"] { color: var(--ui-foreground); }
+  .ui-theme-switch-item:active { transform: scale(0.92); }
+  .ui-theme-switch-item:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-theme-switch-item[aria-checked="false"]:hover { color: var(--ui-foreground); }
+  }
+  /* Before the pill is measured (SSR / first paint) the active option carries the highlight itself */
+  .ui-theme-switch:not([data-ready]) .ui-theme-switch-item[aria-checked="true"] {
+    background-color: var(--ui-background);
+    box-shadow: var(--ui-shadow-sm);
+  }
+}
+
+/* The circular reveal: no cross-fade, the new theme is clipped by the JS-driven circle */
+:root[data-ui-reveal]::view-transition-old(root),
+:root[data-ui-reveal]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+:root[data-ui-reveal]::view-transition-old(root) { z-index: 1; }
+:root[data-ui-reveal]::view-transition-new(root) { z-index: 2; }
+
+/* Reduced motion: the theme swaps instantly (JS skips the transition); the pill jumps */
+@media (prefers-reduced-motion: reduce) {
+  .ui-theme-switch-item:active { transform: none; }
+}

@@ -33,7 +33,7 @@ export function createValueFormatter(format: ValueFormat = 'number', locale?: st
     return (v) => `${f.format(v)}%`;
   }
   if (typeof format === 'string') {
-    const f = intl(PRESETS[format] ?? PRESETS.number, locale);
+    const f = intl(PRESETS[format] ?? PRESETS.number!, locale);
     return (v) => f.format(v);
   }
   const { locale: own, ...options } = format;

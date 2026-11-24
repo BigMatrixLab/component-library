@@ -19,7 +19,8 @@ const systemPrompt = cache(async () => {
 });
 
 const componentSpec = cache(async (name: string) => {
-  const path = `prompts/components/${name}.md`;
+  // "blocks/<name>" reads prompts/blocks/<name>.md; anything else is a component spec
+  const path = name.startsWith('blocks/') ? `prompts/${name}.md` : `prompts/components/${name}.md`;
   return existsSync(join(repoRoot, path)) ? readRepoFile(path) : `## Component: ${name}\n\n(Spec pending.)\n`;
 });
 
@@ -52,7 +53,8 @@ export async function buildPrompts(component: string, example: string, exampleTi
     readExample(example),
     graphs(),
   ]);
-  const title = titleCase(component);
+  // "blocks/hero" → "Hero block"
+  const title = component.startsWith('blocks/') ? `${titleCase(component.slice(7))} block` : titleCase(component);
 
   // Components the example uses (by imported names), plus the page's own component
   const imported = new Set(

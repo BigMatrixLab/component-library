@@ -56,12 +56,13 @@ export function computeBars(input: BarInput): BarGeometry {
   const K = visible.length;
   const stack = stacked ? stackSeries(data, visible.map((s) => s.key)) : null;
 
+  const stackAt = (k: number, i: number) => stack![k]![i]!;
   let min = 0;
   let max = 0;
   visible.forEach((s, k) =>
     data.forEach((row, i) => {
-      const lo = stack ? stack[k][i].lo : Math.min(toNumber(row[s.key]) ?? 0, 0);
-      const hi = stack ? stack[k][i].hi : Math.max(toNumber(row[s.key]) ?? 0, 0);
+      const lo = stack ? stackAt(k, i).lo : Math.min(toNumber(row[s.key]) ?? 0, 0);
+      const hi = stack ? stackAt(k, i).hi : Math.max(toNumber(row[s.key]) ?? 0, 0);
       min = Math.min(min, lo);
       max = Math.max(max, hi);
     }),
@@ -105,8 +106,8 @@ export function computeBars(input: BarInput): BarGeometry {
     visible.forEach((s, k) => {
       const v = toNumber(row[s.key]) ?? 0;
       if (v === 0) return;
-      const lo = stack ? stack[k][i].lo : Math.min(v, 0);
-      const hi = stack ? stack[k][i].hi : Math.max(v, 0);
+      const lo = stack ? stackAt(k, i).lo : Math.min(v, 0);
+      const hi = stack ? stackAt(k, i).hi : Math.max(v, 0);
       const clampedLo = clamp(lo, domain[0], domain[1]);
       const clampedHi = clamp(hi, domain[0], domain[1]);
       const groupW = stacked ? Math.min(band.bandwidth, MAX_BAR + 8) : Math.min(band.bandwidth, MAX_BAR * K + GAP * (K - 1));
@@ -133,7 +134,7 @@ export function computeBars(input: BarInput): BarGeometry {
 
   const cats: AxisTick[] = labelIndices(n, horizontal ? bottom - top : right - left, horizontal ? 4 : catLabelW).map((i) => ({
     pos: band(i) + band.bandwidth / 2,
-    label: labels[i],
+    label: labels[i] ?? '',
   }));
   const valueTicks: AxisTick[] = ticks.map((t) => ({ pos: vs(t), label: formatValue(t) }));
   const crossesZero = domain[0] < 0 && domain[1] > 0;
@@ -151,7 +152,7 @@ export function computeBars(input: BarInput): BarGeometry {
     extent: (i) => {
       let best = horizontal ? left : bottom;
       visible.forEach((s, k) => {
-        const hi = stack ? stack[k][i].hi : Math.max(toNumber(data[i][s.key]) ?? 0, 0);
+        const hi = stack ? stackAt(k, i).hi : Math.max(toNumber(data[i]![s.key]) ?? 0, 0);
         const px = vs(clamp(hi, domain[0], domain[1]));
         best = horizontal ? Math.max(best, px) : Math.min(best, px);
       });

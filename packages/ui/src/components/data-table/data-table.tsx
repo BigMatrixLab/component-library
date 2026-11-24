@@ -267,7 +267,7 @@ function DataTableInner<T>(props: DataTableProps<T>, ref: ForwardedRef<HTMLDivEl
     .filter((c) => c.hideable !== false)
     .map((c) => {
       const visible = visibility[c.id] ?? !c.hidden;
-      return { id: c.id, label: labels[c.id], visible, disabled: visible && visibleColumns.length <= 1 };
+      return { id: c.id, label: labels[c.id] ?? c.id, visible, disabled: visible && visibleColumns.length <= 1 };
     });
   const showColumnsMenu = columnsMenu && columnMenuItems.length > 0;
   const showToolbar = searchable || showColumnsMenu || toolbar != null;
@@ -380,7 +380,7 @@ function DataTableInner<T>(props: DataTableProps<T>, ref: ForwardedRef<HTMLDivEl
 
           {!loading &&
             pageInfo.rows.map((row, index) => {
-              const rowId = pageIds[index];
+              const rowId = pageIds[index]!;
               const selected = selectedSet.has(rowId);
               return (
                 <TableRow key={rowId} selected={selected}>

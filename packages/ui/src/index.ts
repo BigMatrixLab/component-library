@@ -10,6 +10,10 @@ export { useScrollLock } from './hooks/use-scroll-lock';
 export { useDismiss } from './hooks/use-dismiss';
 export { useRovingFocus } from './hooks/use-roving-focus';
 export { useFloating } from './hooks/use-floating';
+export { useMediaQuery } from './hooks/use-media-query';
+export { useInView } from './hooks/use-in-view';
+export type { UseInViewOptions } from './hooks/use-in-view';
+export { useReducedMotion } from './hooks/use-reduced-motion';
 
 export { Icon, iconPaths } from './icons/icon';
 export type { IconName, IconProps } from './icons/icon';
@@ -81,7 +85,13 @@ export * from './components/confirm-morph';
 export * from './components/inline-edit';
 export * from './components/expanding-search';
 export * from './components/theme-switch';
+export * from './components/billing-toggle';
+export * from './components/text-shimmer';
+export * from './components/password-strength';
+export * from './components/usage-meter';
+export * from './components/announcement-bar';
+export * from './components/onboarding-checklist';
 
-export { ThemeScript, themeBootScript, THEME_STORAGE } from './theme/theme-script';
+export { ThemeScript, themeBootScript, THEME_STORAGE, THEME_PACKS } from './theme/theme-script';
 export { useTheme, THEME_ACCENTS } from './theme/use-theme';
-export type { ThemeMode, ThemeAccent } from './theme/use-theme';
+export type { ThemeMode, ThemeAccent, ThemePack } from './theme/use-theme';

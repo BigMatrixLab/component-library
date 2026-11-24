@@ -1,2 +1,1 @@
-// theme-switch — being built; replace with: export * from './theme-switch';
-export {};
+export * from './theme-switch';

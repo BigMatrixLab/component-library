@@ -1,3 +1,5 @@
+'use client';
+
 import { Slider } from 'ui-kit';
 
 const levels = ['Draft', 'Standard', 'High', 'Maximum'];

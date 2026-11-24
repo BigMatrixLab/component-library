@@ -1,0 +1,52 @@
+/* Billing toggle ----------------------------------------------------------
+   <div class="ui-seg ui-billing-toggle" role="radiogroup" aria-label="Billing period">
+     .ui-seg-pill + .ui-seg-item.ui-billing-toggle-item × 2
+       yearly item may hold <span class="ui-badge ui-badge-success ui-badge-sm ui-billing-toggle-save">
+   The control itself is the segmented control (toggle-group.css): the pill glides on the morph spring.
+
+   <span class="ui-billing-price [ui-billing-price-sm|-lg]" aria-live="polite" aria-atomic="true">
+     <span class="ui-number ui-billing-price-amount">…rolling digits…</span>
+     <span class="ui-billing-price-period">/ month</span>
+   Digits roll on the morph spring (animated-counter.css); reduced motion swaps instantly.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-seg-item.ui-billing-toggle-item { gap: 0.5rem; }
+
+  /* The savings badge reads as part of the yearly label; it stays tinted in both states */
+  .ui-billing-toggle-save {
+    margin-inline-end: -0.25rem;
+    font-variant-numeric: tabular-nums;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  .ui-billing-toggle-item[aria-checked="true"] .ui-billing-toggle-save {
+    --ui-badge-bg: color-mix(in oklch, var(--ui-badge-tone) 14%, transparent);
+    --ui-badge-border: color-mix(in oklch, var(--ui-badge-tone) 32%, transparent);
+  }
+  .ui-billing-toggle-item:active:not(:disabled) .ui-billing-toggle-save { transform: scale(0.96); }
+
+  /* Price */
+  .ui-billing-price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    white-space: nowrap;
+  }
+  .ui-billing-price-amount {
+    font-size: var(--text-4xl);
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .ui-billing-price-sm .ui-billing-price-amount { font-size: var(--text-2xl); letter-spacing: -0.01em; }
+  .ui-billing-price-lg .ui-billing-price-amount { font-size: var(--text-5xl); }
+  .ui-billing-price-period {
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-base);
+    font-weight: 400;
+  }
+  .ui-billing-price-lg .ui-billing-price-period { font-size: var(--text-md); }
+}

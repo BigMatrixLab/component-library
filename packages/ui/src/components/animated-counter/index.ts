@@ -1,2 +1,2 @@
-// animated-counter — being built; replace with: export * from './animated-counter';
-export {};
+export * from './animated-counter';
+export { useCountUp, type UseCountUpOptions } from '../../hooks/use-count-up';

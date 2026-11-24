@@ -38,7 +38,7 @@ export const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivEleme
 
 export interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {
   /** Heading element. Pick the level that fits the page outline; `div` for no heading. Default `h3`. */
-  as?: 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div';
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div';
 }
 
 export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(function CardTitle(

@@ -1,2 +1,1 @@
-// inline-edit — being built; replace with: export * from './inline-edit';
-export {};
+export * from './inline-edit';

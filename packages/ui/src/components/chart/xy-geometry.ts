@@ -46,12 +46,13 @@ export function computeXY(input: XYInput): XYGeometry {
   const keys = visible.map((s) => s.key);
   const stack = stacked && variant === 'area' ? stackSeries(data, keys) : null;
 
+  const stackAt = (k: number, i: number) => stack![k]![i]!;
   let min = Infinity;
   let max = -Infinity;
   visible.forEach((s, k) =>
     data.forEach((row, i) => {
-      const hi = stack ? stack[k][i].hi : toNumber(row[s.key]);
-      const lo = stack ? stack[k][i].lo : hi;
+      const hi = stack ? stackAt(k, i).hi : toNumber(row[s.key]);
+      const lo = stack ? stackAt(k, i).lo : hi;
       if (hi == null || lo == null) return;
       max = Math.max(max, hi);
       min = Math.min(min, lo);
@@ -85,13 +86,13 @@ export function computeXY(input: XYInput): XYGeometry {
 
   const lines: XYLine[] = visible.map((s, k) => {
     const points: (Point | null)[] = data.map((row, i) => {
-      const v = stack ? stack[k][i].hi : toNumber(row[s.key]);
+      const v = stack ? stackAt(k, i).hi : toNumber(row[s.key]);
       return v == null ? null : { x: xs(i), y: ys(v) };
     });
     const defined = points.filter((p): p is Point => p !== null);
     let area: string | null = null;
     if (variant === 'area' && defined.length > 0) {
-      const lower = stack ? data.map((_, i) => ({ x: xs(i), y: ys(stack[k][i].lo) })) : baseY;
+      const lower = stack ? data.map((_, i) => ({ x: xs(i), y: ys(stackAt(k, i).lo) })) : baseY;
       area = areaPath(defined, lower, curve);
     }
     return { series: s, d: linePath(points, curve), area, points };
@@ -99,7 +100,7 @@ export function computeXY(input: XYInput): XYGeometry {
 
   const hTicks = ticks.map((t) => ({ pos: ys(t), label: formatY(t) }));
   const idx = showX ? labelIndices(n, span, labelWidth(xLabels)) : [];
-  const vTicks = idx.map((i) => ({ pos: xs(i), label: xLabels[i] }));
+  const vTicks = idx.map((i) => ({ pos: xs(i), label: xLabels[i] ?? '' }));
 
   return {
     plot: { left, right, top, bottom },

@@ -51,8 +51,8 @@ export function XYChart(props: XYChartProps) {
   const x = axisOptions<XAxisOptions>(xAxis);
   const tip = tooltipOptions(tooltip);
   const labelOf = (row: ChartDatum, i: number) => fmtIndex(indexValue(row, index), i);
-  const first = data.length ? labelOf(data[0], 0) : undefined;
-  const last = data.length ? labelOf(data[data.length - 1], data.length - 1) : undefined;
+  const first = data.length ? labelOf(data[0]!, 0) : undefined;
+  const last = data.length ? labelOf(data[data.length - 1]!, data.length - 1) : undefined;
   const name = props['aria-label'] ?? summarize(variant === 'line' ? 'Line chart' : stacked ? 'Stacked area chart' : 'Area chart', data.length, visible, first, last);
   const legendPos = legend ?? (all.length > 1 ? 'bottom' : false);
 
@@ -195,9 +195,9 @@ function XYPlot(p: XYPlotProps) {
   );
 
   const readout = (i: number) => ({
-    label: p.tooltipFormat(indexValue(p.rawData[i], p.index), i),
+    label: p.tooltipFormat(indexValue(p.rawData[i]!, p.index), i),
     rows: p.visible.map((s) => {
-      const v = toNumber(p.rawData[i][s.key]);
+      const v = toNumber(p.rawData[i]![s.key]);
       return { color: seriesVar(s.index), name: s.label, value: v == null ? '—' : p.fmt(v) };
     }),
   });

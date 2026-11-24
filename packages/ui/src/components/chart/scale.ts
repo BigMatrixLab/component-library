@@ -85,7 +85,7 @@ export function niceScale(min: number, max: number, count = 5): NiceScale {
   const total = Math.round((hi - lo) / step);
   const ticks: number[] = [];
   for (let i = 0; i <= total; i++) ticks.push(Number((lo + i * step).toFixed(digits)));
-  return { min: ticks[0], max: ticks[ticks.length - 1], step, ticks };
+  return { min: ticks[0]!, max: ticks[ticks.length - 1]!, step, ticks };
 }
 
 /** A finite number from a number or numeric string; otherwise null. */
@@ -115,10 +115,10 @@ export function stackSeries(data: Record<string, unknown>[], keys: string[]): St
     keys.forEach((key, k) => {
       const v = toNumber(row[key]) ?? 0;
       if (v >= 0) {
-        out[k].push({ lo: pos, hi: pos + v });
+        out[k]!.push({ lo: pos, hi: pos + v });
         pos += v;
       } else {
-        out[k].push({ lo: neg + v, hi: neg });
+        out[k]!.push({ lo: neg + v, hi: neg });
         neg += v;
       }
     });

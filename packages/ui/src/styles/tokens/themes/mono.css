@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Mono — brutal-lite: pure greys, ink-black primary, strong borders instead
+   of shadows, small corners (4px base; tailwind.css floors radii at 2–4px)
+   and monospaced display headings.
+   Lowest text pair: muted text on surface-muted, 5.42:1 (light);
+   status text on surface-muted, 5.39:1 (dark).
+   ========================================================================== */
+
+[data-theme="mono"] {
+  --ui-tone-0: oklch(1 0 0);
+  --ui-tone-50: oklch(0.985 0 0);
+  --ui-tone-100: oklch(0.965 0 0);
+  --ui-tone-150: oklch(0.94 0 0);
+  --ui-tone-200: oklch(0.915 0 0);
+  --ui-tone-300: oklch(0.86 0 0);
+  --ui-tone-400: oklch(0.7 0 0);
+  --ui-tone-500: oklch(0.5 0 0);
+  --ui-tone-700: oklch(0.37 0 0);
+  --ui-tone-800: oklch(0.27 0 0);
+  --ui-tone-850: oklch(0.235 0 0);
+  --ui-tone-900: oklch(0.205 0 0);
+  --ui-tone-925: oklch(0.18 0 0);
+  --ui-tone-950: oklch(0.13 0 0);
+
+  --ui-pack-radius: 0.25rem;
+
+  --ui-pack-primary: var(--ui-tone-950);
+  --ui-pack-primary-foreground: var(--ui-tone-0);
+  --ui-pack-primary-text: var(--ui-tone-950);
+  --ui-pack-border: var(--ui-tone-800);
+  --ui-pack-border-subtle: var(--ui-tone-200);
+  --ui-pack-border-strong: var(--ui-tone-800);
+  --ui-pack-ring: var(--ui-tone-500);
+  --ui-pack-sidebar-border: var(--ui-tone-800);
+
+  --ui-pack-primary-dark: var(--ui-tone-0);
+  --ui-pack-primary-foreground-dark: var(--ui-tone-950);
+  --ui-pack-primary-text-dark: var(--ui-tone-0);
+  --ui-pack-border-dark: var(--ui-tone-400);
+  --ui-pack-border-subtle-dark: oklch(1 0 0 / 0.12);
+  --ui-pack-border-strong-dark: var(--ui-tone-400);
+  --ui-pack-sidebar-border-dark: var(--ui-tone-400);
+
+  /* No shadows. Zero-size transparent shadows (not `none`) so a component
+     that stacks a focus ring after a shadow still gets a valid list. */
+  --ui-pack-shadow-xs: 0 0 0 0 transparent;
+  --ui-pack-shadow-sm: 0 0 0 0 transparent;
+  --ui-pack-shadow-md: 0 0 0 0 transparent;
+  --ui-pack-shadow-lg: 0 0 0 0 transparent;
+  --ui-pack-shadow-xs-dark: 0 0 0 0 transparent;
+  --ui-pack-shadow-sm-dark: 0 0 0 0 transparent;
+  --ui-pack-shadow-md-dark: 0 0 0 0 transparent;
+  --ui-pack-shadow-lg-dark: 0 0 0 0 transparent;
+  --ui-pack-overlay: oklch(0 0 0 / 0.5);
+}
+
+/* Doubled attribute: beats the later `:root { --ui-font-display }` in base.css */
+[data-theme="mono"][data-theme] { --ui-font-display: var(--ui-font-mono); }

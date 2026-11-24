@@ -1,6 +1,34 @@
 'use client';
 
-import { Button, Icon, THEME_ACCENTS, useTheme, cn } from 'ui-kit';
+import { Button, Icon, NativeSelect, THEME_ACCENTS, THEME_PACKS, useTheme, cn } from 'ui-kit';
+
+const packLabel: Record<string, string> = {
+  neutral: 'Neutral',
+  stone: 'Stone',
+  slate: 'Slate',
+  soft: 'Soft',
+  mono: 'Mono',
+};
+
+/** Theme pack for the whole site (saved, applied before paint by <ThemeScript />). */
+export function PackPicker({ className }: { className?: string }) {
+  const { pack, setPack } = useTheme();
+  return (
+    <NativeSelect
+      size="sm"
+      aria-label="Theme pack"
+      value={pack}
+      onChange={(e) => setPack(e.target.value)}
+      wrapperClassName={cn('w-28', className)}
+    >
+      {THEME_PACKS.map((p) => (
+        <option key={p} value={p}>
+          {packLabel[p] ?? p}
+        </option>
+      ))}
+    </NativeSelect>
+  );
+}
 
 const swatch: Record<string, string> = {
   neutral: 'var(--ui-gray-800)',

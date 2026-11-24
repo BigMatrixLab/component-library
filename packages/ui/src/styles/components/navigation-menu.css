@@ -1,1 +1,148 @@
-/* navigation-menu — being built */
+/* Navigation menu ---------------------------------------------------------
+   <nav class="ui-nav-menu" data-mode="menu|accordion">
+     <ul class="ui-nav-menu-list">
+       <li class="ui-nav-menu-item">
+         <button class="ui-nav-menu-trigger" data-state aria-expanded> label + chevron
+         (content is portaled into the shared panel below, or sits in .ui-nav-menu-accordion)
+       <li class="ui-nav-menu-item"><a class="ui-nav-menu-link">
+     <div class="ui-floating ui-nav-menu-panel" popover="manual" data-state>     ONE panel, top layer
+       <div class="ui-nav-menu-surface">                                          the visible box (JS animates its size)
+         <div class="ui-nav-menu-slot">
+           <div class="ui-nav-menu-content" data-state data-motion="from-start|from-end|to-start|to-end">
+       <span class="ui-nav-menu-caret">                                           glides under the trigger
+   JS writes left/top and --ui-nav-caret-x on the panel; when the open item
+   changes it animates the panel's `translate`, the surface's width/height and
+   the caret's `translate` from the previous box on the smooth spring.
+   Rich links: .ui-nav-menu-link[data-in-content] > .ui-nav-menu-link-title + -description
+   Layout helper: .ui-nav-menu-grid (--ui-nav-cols, --ui-nav-width).
+   ------------------------------------------------------------------------ */
+
+@keyframes ui-nav-in-end { from { opacity: 0; transform: translateX(28px); filter: blur(var(--ui-blur-subtle)); } }
+@keyframes ui-nav-in-start { from { opacity: 0; transform: translateX(-28px); filter: blur(var(--ui-blur-subtle)); } }
+@keyframes ui-nav-out-start { to { opacity: 0; transform: translateX(-28px); } }
+@keyframes ui-nav-out-end { to { opacity: 0; transform: translateX(28px); } }
+
+@layer components {
+  .ui-nav-menu { position: relative; }
+  .ui-nav-menu-list { display: flex; align-items: center; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+  .ui-nav-menu-item { position: relative; min-width: 0; }
+
+  /* ---- bar: triggers and plain links ---- */
+  .ui-nav-menu-trigger,
+  .ui-nav-menu-link:not([data-in-content]) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    height: 2.25rem;
+    padding-inline: 0.75rem;
+    border-radius: var(--radius-md);
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-base);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--ui-duration-fast) var(--ui-ease-standard), background-color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-nav-menu-trigger[data-state="open"],
+  .ui-nav-menu-link:not([data-in-content])[aria-current="page"] { color: var(--ui-foreground); }
+  .ui-nav-menu-trigger[data-state="open"] { background: var(--ui-accent); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-nav-menu-trigger:hover,
+    .ui-nav-menu-link:not([data-in-content]):hover { color: var(--ui-foreground); background: color-mix(in oklch, var(--ui-accent) 70%, transparent); }
+  }
+  .ui-nav-menu-trigger:focus-visible,
+  .ui-nav-menu-link:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-nav-menu-chevron { flex: none; transition: transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy); }
+  .ui-nav-menu-trigger[data-state="open"] .ui-nav-menu-chevron { transform: rotate(180deg); }
+
+  /* ---- the shared panel ---- */
+  .ui-nav-menu-panel { width: max-content; max-width: calc(100vw - 1rem); }
+  .ui-nav-menu-panel[data-state="open"] { animation: ui-pop-in var(--ui-duration-slow) var(--ui-ease-out) both; }
+  .ui-nav-menu-panel[data-state="closed"] { animation: ui-pop-out var(--ui-duration-exit) var(--ui-ease-in) both; pointer-events: none; }
+
+  .ui-nav-menu-surface {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-xl);
+    background: var(--ui-surface-raised);
+    color: var(--ui-surface-raised-foreground);
+    box-shadow: var(--ui-shadow-lg);
+  }
+  .ui-nav-menu-slot { position: relative; width: max-content; max-width: calc(100vw - 1rem - 2px); }
+  .ui-nav-menu-content { padding: 0.5rem; }
+  .ui-nav-menu-content[data-motion="from-end"] { animation: ui-nav-in-end var(--ui-duration-slow) var(--ui-ease-out) both; }
+  .ui-nav-menu-content[data-motion="from-start"] { animation: ui-nav-in-start var(--ui-duration-slow) var(--ui-ease-out) both; }
+  /* the item being left: lifted out of the flow so the panel sizes to the new one */
+  .ui-nav-menu-content[data-state="closed"][data-motion^="to-"] { position: absolute; top: 0; left: 0; pointer-events: none; }
+  .ui-nav-menu-content[data-motion="to-start"] { animation: ui-nav-out-start var(--ui-duration-exit) var(--ui-ease-in) both; }
+  .ui-nav-menu-content[data-motion="to-end"] { animation: ui-nav-out-end var(--ui-duration-exit) var(--ui-ease-in) both; }
+
+  .ui-nav-menu-caret {
+    position: absolute;
+    top: -5px;
+    left: var(--ui-nav-caret-x, 50%);
+    width: 10px;
+    height: 10px;
+    border-top: 1px solid var(--ui-border);
+    border-left: 1px solid var(--ui-border);
+    border-top-left-radius: 2px;
+    background: var(--ui-surface-raised);
+    transform: translateX(-50%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  /* ---- panel links ---- */
+  .ui-nav-menu-link[data-in-content] {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--radius-md);
+    color: var(--ui-foreground);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-nav-menu-link[data-in-content]:hover { background: var(--ui-accent); }
+  }
+  .ui-nav-menu-link[data-in-content][aria-current="page"] { background: var(--ui-accent); }
+  .ui-nav-menu-link-title { font-size: var(--text-base); font-weight: 500; line-height: 1.25rem; }
+  .ui-nav-menu-link-description { font-size: var(--text-sm); font-weight: 400; line-height: 1.125rem; color: var(--ui-muted-foreground); }
+
+  .ui-nav-menu-grid {
+    display: grid;
+    gap: 0.125rem;
+    grid-template-columns: repeat(var(--ui-nav-cols, 1), minmax(0, 1fr));
+    width: var(--ui-nav-width, 22rem);
+    max-width: calc(100vw - 2rem);
+  }
+
+  /* ---- accordion fallback ---- */
+  .ui-nav-menu[data-mode="accordion"] .ui-nav-menu-list { flex-direction: column; align-items: stretch; gap: 0.125rem; }
+  .ui-nav-menu[data-mode="accordion"] .ui-nav-menu-trigger,
+  .ui-nav-menu[data-mode="accordion"] .ui-nav-menu-link:not([data-in-content]) {
+    width: 100%;
+    height: 2.75rem;
+    justify-content: space-between;
+    font-size: var(--text-md);
+  }
+  .ui-nav-menu-accordion {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition: grid-template-rows var(--ui-spring-smooth-duration) var(--ui-spring-smooth),
+      visibility 0s linear var(--ui-spring-smooth-duration);
+  }
+  .ui-nav-menu-accordion[data-state="open"] {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition: grid-template-rows var(--ui-spring-smooth-duration) var(--ui-spring-smooth), visibility 0s;
+  }
+  .ui-nav-menu-accordion-inner { min-height: 0; overflow: hidden; }
+  .ui-nav-menu[data-mode="accordion"] .ui-nav-menu-content { padding: 0.125rem 0 0.5rem 0.75rem; }
+  .ui-nav-menu[data-mode="accordion"] .ui-nav-menu-grid { grid-template-columns: minmax(0, 1fr); width: 100%; max-width: none; }
+}

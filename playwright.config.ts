@@ -12,7 +12,7 @@ export default defineConfig({
   workers: process.env.CI ? 2 : 4,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  reporter: [['list']],
+  reporter: process.env.CI ? [['blob'], ['list']] : [['list']],
   expect: {
     toHaveScreenshot: { maxDiffPixelRatio: 0.01, animations: 'disabled', caret: 'hide' },
   },
@@ -31,6 +31,6 @@ export default defineConfig({
     command: 'npm run dev -w docs',
     url: 'http://localhost:4321',
     reuseExistingServer: true,
-    timeout: 120_000,
+    timeout: process.env.CI ? 300_000 : 120_000,
   },
 });

@@ -1,0 +1,31 @@
+/* ==========================================================================
+   Layer 3 — theme packs. A pack changes the whole look (colour map in light
+   and dark, radius, shadows, display face) by overriding semantic tokens
+   only; component CSS never changes.
+
+     <html data-theme="stone">          whole app
+     <section data-theme="soft">        any subtree
+     <div data-theme="slate" class="dark">                 subtree in dark
+     <div data-theme="slate" data-theme-mode="light">      subtree in light,
+                                                           even on a dark page
+
+   Packs: neutral (default, same as no attribute), stone, slate, soft, mono.
+   They compose with `.dark` / data-theme-mode and with data-accent: an
+   accent always wins over the pack's own primary colour.
+
+   How it works (themes/engine.css):
+     1. Every [data-theme] element gets a tone ramp (--ui-tone-*) and a set
+        of role knobs (--ui-pack-*, --ui-pack-*-dark) with neutral defaults.
+     2. A pack file overrides the ramp and only the knobs it cares about.
+     3. Two shared maps turn the knobs into the semantic roles (--ui-*), one
+        for light and one for dark, on the same element. Re-declaring every
+        role there is what lets a pack (or `neutral`) reset a subtree.
+
+   @imports must stay first in this file; the engine must come before packs.
+   ========================================================================== */
+
+@import "./themes/engine.css";
+@import "./themes/stone.css";
+@import "./themes/slate.css";
+@import "./themes/soft.css";
+@import "./themes/mono.css";

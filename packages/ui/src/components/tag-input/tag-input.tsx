@@ -202,7 +202,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(function Tag
   /** Enter / Tab: take the highlighted suggestion or the typed text. Returns true when it handled the key. */
   const acceptCurrent = (): boolean => {
     if (activeIndex >= 0) {
-      pick(filtered[activeIndex]);
+      pick(filtered[activeIndex]!);
       return true;
     }
     if (!text.trim()) return false;

@@ -1,0 +1,52 @@
+/* ==========================================================================
+   Soft — rounder (14px base), lavender-tinted page with white cards, a
+   muted indigo primary and wide, diffuse shadows. Friendly consumer feel.
+   Lowest text pair: muted text on the hover fill, 4.98:1 (light);
+   status text on surface-muted, 5.21:1 (dark). Primary pairs are listed in
+   tests/themes.spec.ts and measured there too.
+   ========================================================================== */
+
+[data-theme="soft"] {
+  --ui-tone-0: oklch(1 0 0);
+  --ui-tone-50: oklch(0.982 0.008 290);
+  --ui-tone-100: oklch(0.962 0.013 290);
+  --ui-tone-150: oklch(0.94 0.017 290);
+  --ui-tone-200: oklch(0.912 0.022 290);
+  --ui-tone-300: oklch(0.862 0.03 290);
+  --ui-tone-400: oklch(0.7 0.05 288);
+  --ui-tone-500: oklch(0.505 0.05 288);
+  --ui-tone-700: oklch(0.38 0.06 286);
+  --ui-tone-800: oklch(0.29 0.05 285);
+  --ui-tone-850: oklch(0.25 0.045 285);
+  --ui-tone-900: oklch(0.225 0.04 285);
+  --ui-tone-925: oklch(0.195 0.035 285);
+  --ui-tone-950: oklch(0.16 0.03 285);
+
+  --ui-pack-radius: 0.875rem;
+
+  /* Tinted page, white cards on top */
+  --ui-pack-background: var(--ui-tone-50);
+  --ui-pack-surface-muted: var(--ui-tone-100);
+  --ui-pack-secondary: var(--ui-tone-150);
+  --ui-pack-accent: var(--ui-tone-150);
+  --ui-pack-sidebar: var(--ui-tone-100);
+  --ui-pack-sidebar-accent: var(--ui-tone-200);
+  --ui-pack-primary: oklch(0.47 0.14 285);
+  --ui-pack-primary-foreground: var(--ui-tone-0);
+  --ui-pack-primary-text: oklch(0.47 0.14 285);
+  --ui-pack-ring: oklch(0.62 0.12 285);
+
+  --ui-pack-primary-dark: oklch(0.8 0.09 285);
+  --ui-pack-primary-foreground-dark: var(--ui-tone-950);
+  --ui-pack-primary-text-dark: oklch(0.8 0.09 285);
+  --ui-pack-ring-dark: oklch(0.62 0.1 285);
+  --ui-pack-border-dark: oklch(0.85 0.04 290 / 0.11);
+  --ui-pack-border-subtle-dark: oklch(0.85 0.04 290 / 0.07);
+  --ui-pack-border-strong-dark: oklch(0.85 0.04 290 / 0.17);
+
+  --ui-pack-shadow-xs: 0 1px 2px 0 oklch(0.35 0.06 285 / 0.05);
+  --ui-pack-shadow-sm: 0 1px 2px 0 oklch(0.35 0.06 285 / 0.04), 0 2px 6px -1px oklch(0.35 0.06 285 / 0.07);
+  --ui-pack-shadow-md: 0 2px 6px -2px oklch(0.35 0.06 285 / 0.06), 0 10px 24px -6px oklch(0.35 0.06 285 / 0.12);
+  --ui-pack-shadow-lg: 0 4px 12px -4px oklch(0.35 0.06 285 / 0.08), 0 24px 56px -12px oklch(0.35 0.06 285 / 0.2);
+  --ui-pack-overlay: oklch(0.25 0.04 285 / 0.35);
+}

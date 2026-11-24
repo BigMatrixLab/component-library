@@ -1,1 +1,170 @@
-/* navbar — being built */
+/* Navbar ------------------------------------------------------------------
+   <header class="ui-navbar" data-variant="default|floating" data-sticky data-scrolled>
+     <div class="ui-navbar-inner">
+       <a class="ui-navbar-brand">
+       <nav class="ui-navbar-nav" data-indicator="pill|underline">
+         <a class="ui-navbar-link" aria-current="page">…
+         <span class="ui-navbar-indicator">          ONE element, glides to the active link
+       <div class="ui-navbar-actions">
+       <button class="ui-navbar-toggle">             only when the navbar is narrow
+   Mobile menu: <dialog class="ui-sheet ui-navbar-sheet"> … .ui-navbar-mobile panel
+   The navbar is its own size container, so it collapses by its own width
+   (works in a framed preview as well as full page). JS writes --ui-tab-x/y/w/h
+   on .ui-navbar-nav (shared with Tabs); data-ready / data-animate as in Tabs.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-navbar {
+    --ui-navbar-height: 4rem;
+    position: relative;
+    z-index: 40;
+    container-type: inline-size;
+    container-name: ui-navbar;
+    width: 100%;
+    border-bottom: 1px solid transparent;
+    background: color-mix(in oklch, var(--ui-background) 82%, transparent);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+    transition: border-color var(--ui-duration) var(--ui-ease-standard),
+      box-shadow var(--ui-duration) var(--ui-ease-standard),
+      background-color var(--ui-duration) var(--ui-ease-standard);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .ui-navbar { background: var(--ui-background); }
+  }
+  .ui-navbar[data-sticky] { position: sticky; top: 0; }
+  .ui-navbar[data-scrolled] { border-bottom-color: var(--ui-border); }
+
+  .ui-navbar-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: var(--ui-navbar-height);
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  /* ---- floating pill ---- */
+  .ui-navbar[data-variant="floating"] {
+    --ui-navbar-height: 3.5rem;
+    width: min(calc(100% - 1.5rem), 64rem);
+    margin: 0.75rem auto 0;
+    border: 1px solid var(--ui-border);
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--ui-surface-raised) 78%, transparent);
+    box-shadow: var(--ui-shadow-sm);
+  }
+  .ui-navbar[data-variant="floating"][data-sticky] { top: 0.75rem; }
+  .ui-navbar[data-variant="floating"][data-scrolled] { border-color: var(--ui-border); box-shadow: var(--ui-shadow-md); }
+  .ui-navbar[data-variant="floating"] .ui-navbar-inner { padding-inline: 1.25rem; }
+
+  /* ---- brand ---- */
+  .ui-navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: none;
+    border-radius: var(--radius-md);
+    color: var(--ui-foreground);
+    font-family: var(--ui-font-display);
+    font-size: var(--text-md);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ui-navbar-brand:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+
+  /* ---- links with the gliding highlight ---- */
+  .ui-navbar-nav { position: relative; display: flex; align-items: center; gap: 0.25rem; margin-inline-end: auto; }
+  .ui-navbar-link {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    height: 2.25rem;
+    padding-inline: 0.75rem;
+    border-radius: var(--radius-md);
+    color: var(--ui-muted-foreground);
+    font-size: var(--text-base);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--ui-duration-fast) var(--ui-ease-standard), background-color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-navbar-link[aria-current="page"] { color: var(--ui-foreground); }
+  .ui-navbar-link:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-navbar-link:hover { color: var(--ui-foreground); }
+  }
+
+  .ui-navbar-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+    width: var(--ui-tab-w, 0px);
+    height: var(--ui-tab-h, 0px);
+    transform: translate(var(--ui-tab-x, 0px), var(--ui-tab-y, 0px));
+    border-radius: var(--radius-md);
+    background: var(--ui-accent);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ui-navbar-nav[data-ready] .ui-navbar-indicator { opacity: 1; }
+  .ui-navbar-nav[data-animate] .ui-navbar-indicator {
+    transition: transform var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      width var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      height var(--ui-spring-morph-duration) var(--ui-spring-morph);
+  }
+
+  /* underline: the links fill the navbar's height, the bar sits on its bottom edge */
+  .ui-navbar-nav[data-indicator="underline"] { align-self: stretch; }
+  .ui-navbar-nav[data-indicator="underline"] .ui-navbar-link { height: 100%; border-radius: 0; }
+  .ui-navbar-nav[data-indicator="underline"] .ui-navbar-indicator {
+    height: 2px;
+    transform: translate(var(--ui-tab-x, 0px), calc(var(--ui-tab-y, 0px) + var(--ui-tab-h, 0px) - 2px));
+    border-radius: 2px 2px 0 0;
+    background: var(--ui-primary);
+  }
+  .ui-navbar-nav[data-animate][data-indicator="underline"] .ui-navbar-indicator {
+    transition: transform var(--ui-spring-morph-duration) var(--ui-spring-morph),
+      width var(--ui-spring-morph-duration) var(--ui-spring-morph);
+  }
+  /* before the first measurement (SSR): style the active link itself */
+  .ui-navbar-nav:not([data-ready])[data-indicator="pill"] .ui-navbar-link[aria-current="page"] { background: var(--ui-accent); }
+  .ui-navbar-nav:not([data-ready])[data-indicator="underline"] .ui-navbar-link[aria-current="page"] { box-shadow: inset 0 -2px 0 var(--ui-primary); }
+
+  .ui-navbar-actions { display: flex; align-items: center; gap: 0.5rem; flex: none; margin-inline-start: auto; }
+  .ui-navbar-nav + .ui-navbar-actions { margin-inline-start: 0; }
+
+  .ui-navbar-toggle { display: none; flex: none; }
+
+  /* ---- collapse by the navbar's own width ---- */
+  @container ui-navbar (max-width: 767px) {
+    .ui-navbar-inner { gap: 0.75rem; padding-inline: 1rem; }
+    .ui-navbar-nav { display: none; }
+    .ui-navbar-toggle { display: inline-flex; }
+    .ui-navbar-brand { margin-inline-end: auto; }
+    .ui-navbar-actions { margin-inline-start: 0; }
+    .ui-navbar-actions .ui-navbar-hide-narrow { display: none; }
+  }
+
+  /* ---- mobile menu (inside a Sheet) ---- */
+  .ui-navbar-mobile-nav { display: grid; gap: 0.25rem; align-content: start; }
+  .ui-navbar-mobile .ui-navbar-link {
+    display: flex;
+    width: 100%;
+    height: 2.75rem;
+    padding-inline: 0.75rem;
+    font-size: var(--text-md);
+  }
+  .ui-navbar-mobile .ui-navbar-link[aria-current="page"] { background: var(--ui-accent); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-navbar-mobile .ui-navbar-link:not([aria-current="page"]):hover { background: color-mix(in oklch, var(--ui-accent) 55%, transparent); }
+  }
+}
+
+/* Panels slide in with the Sheet; the navbar itself needs no motion beyond the border fade */

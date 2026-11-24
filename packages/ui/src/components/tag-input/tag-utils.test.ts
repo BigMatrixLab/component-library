@@ -36,6 +36,6 @@ describe('tag-input helpers', () => {
     const r = addTags([], ['ada@x.com', 'nope'], { validate });
     expect(r.tags).toEqual(['ada@x.com']);
     expect(r.rejected).toEqual([{ tag: 'nope', reason: 'invalid', message: 'Not an email address' }]);
-    expect(addTags([], ['x'], { validate: () => false }).rejected[0].reason).toBe('invalid');
+    expect(addTags([], ['x'], { validate: () => false }).rejected[0]!.reason).toBe('invalid');
   });
 });

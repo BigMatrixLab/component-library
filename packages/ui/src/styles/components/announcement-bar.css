@@ -1,0 +1,191 @@
+/* Announcement bar ---------------------------------------------------------
+   <div class="ui-announcement-bar-collapse" data-state="open|closed" [data-animate]>
+     <div class="ui-announcement-bar-collapse-inner">
+       <div class="ui-announcement-bar" role="region" aria-label="Announcement"
+            data-variant="neutral|primary|gradient-subtle" [data-dismissible]>
+         .ui-announcement-bar-content > [.ui-announcement-bar-icon | .ui-announcement-bar-badge]
+                                        p.ui-announcement-bar-message
+                                        a.ui-announcement-bar-link (> -link-label + -link-arrow)
+         button.ui-announcement-bar-close
+   Dismiss: the wrapper's grid row animates 1fr to 0fr while the strip fades and
+   lifts, so the page below glides up. Re-opening (after first render) reverses it.
+   ------------------------------------------------------------------------ */
+
+@keyframes ui-announcement-bar-collapse {
+  from { grid-template-rows: 1fr; opacity: 1; }
+  to { grid-template-rows: 0fr; opacity: 0; }
+}
+@keyframes ui-announcement-bar-expand {
+  from { grid-template-rows: 0fr; opacity: 0; }
+  to { grid-template-rows: 1fr; opacity: 1; }
+}
+@keyframes ui-announcement-bar-lift {
+  to { transform: translateY(-4px); filter: blur(var(--ui-blur-subtle)); }
+}
+
+@layer components {
+  .ui-announcement-bar-collapse { display: grid; grid-template-rows: 1fr; }
+  .ui-announcement-bar-collapse-inner { min-height: 0; }
+  .ui-announcement-bar-collapse[data-state="closed"] {
+    animation: ui-announcement-bar-collapse 280ms var(--ui-ease-in-out) both;
+    pointer-events: none;
+  }
+  .ui-announcement-bar-collapse[data-state="closed"] .ui-announcement-bar-collapse-inner { overflow: hidden; }
+  .ui-announcement-bar-collapse[data-state="closed"] .ui-announcement-bar {
+    animation: ui-announcement-bar-lift var(--ui-duration-exit) var(--ui-ease-in) both;
+  }
+  .ui-announcement-bar-collapse[data-animate][data-state="open"] {
+    animation: ui-announcement-bar-expand var(--ui-spring-smooth-duration) var(--ui-spring-smooth) both;
+  }
+  .ui-announcement-bar-collapse[data-animate][data-state="open"] .ui-announcement-bar-collapse-inner { overflow: hidden; }
+
+  /* The strip */
+  .ui-announcement-bar {
+    --ui-ab-bg: var(--ui-surface-muted);
+    --ui-ab-fg: var(--ui-foreground);
+    --ui-ab-muted: var(--ui-muted-foreground);
+    --ui-ab-border: var(--ui-border);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--ui-ab-border);
+    background: var(--ui-ab-bg);
+    color: var(--ui-ab-fg);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+  }
+  /* Room for the × so centred text never runs under it */
+  .ui-announcement-bar[data-dismissible] { padding-inline: 3rem; }
+
+  .ui-announcement-bar[data-variant="primary"] {
+    --ui-ab-bg: var(--ui-primary);
+    --ui-ab-fg: var(--ui-primary-foreground);
+    --ui-ab-muted: color-mix(in oklch, var(--ui-primary-foreground) 78%, var(--ui-primary));
+    --ui-ab-border: transparent;
+  }
+  /* A soft two-tone wash from the first two data series, over the page surface */
+  .ui-announcement-bar[data-variant="gradient-subtle"] {
+    --ui-ab-border: color-mix(in oklch, var(--ui-series-1) 18%, var(--ui-border));
+    background:
+      linear-gradient(
+        90deg,
+        color-mix(in oklch, var(--ui-series-1) 12%, var(--ui-surface)),
+        color-mix(in oklch, var(--ui-series-2) 10%, var(--ui-surface)) 55%,
+        color-mix(in oklch, var(--ui-series-4) 10%, var(--ui-surface))
+      );
+  }
+
+  .ui-announcement-bar-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: 0.625rem;
+    row-gap: 0.25rem;
+    min-width: 0;
+    max-width: 72rem;
+    text-align: center;
+  }
+  .ui-announcement-bar-icon { display: inline-grid; flex-shrink: 0; place-items: center; color: var(--ui-ab-muted); }
+  .ui-announcement-bar-icon > svg { display: block; width: 1rem; height: 1rem; }
+  .ui-announcement-bar-message { margin: 0; min-width: 0; }
+  .ui-announcement-bar-message strong { font-weight: 600; }
+
+  .ui-announcement-bar-badge {
+    display: inline-flex;
+    align-items: center;
+    height: 1.25rem;
+    padding-inline: 0.5rem;
+    border-radius: 9999px;
+    background-color: var(--ui-primary);
+    color: var(--ui-primary-foreground);
+    font-size: var(--text-xs);
+    line-height: 1;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .ui-announcement-bar[data-variant="primary"] .ui-announcement-bar-badge {
+    background-color: color-mix(in oklch, var(--ui-primary-foreground) 18%, transparent);
+    color: var(--ui-primary-foreground);
+  }
+
+  /* Call to action */
+  .ui-announcement-bar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: var(--radius-sm);
+    color: inherit;
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklch, currentColor 40%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+    transition:
+      text-decoration-color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-announcement-bar-link-arrow {
+    flex-shrink: 0;
+    transition: transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  [dir="rtl"] .ui-announcement-bar-link-arrow { scale: -1 1; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-announcement-bar-link:hover { text-decoration-color: currentColor; }
+    /* In RTL the arrow's `scale: -1 1` flips this nudge too, so it still points forward */
+    .ui-announcement-bar-link:hover .ui-announcement-bar-link-arrow { transform: translateX(2px); }
+  }
+  .ui-announcement-bar-link:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+
+  /* Dismiss */
+  .ui-announcement-bar-close {
+    position: absolute;
+    inset-inline-end: 0.5rem;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-top: -0.875rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--ui-ab-muted);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard),
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  /* 44px touch target without growing the strip */
+  .ui-announcement-bar-close::before { content: ""; position: absolute; inset: -0.5rem; }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-announcement-bar-close:hover { background-color: color-mix(in oklch, var(--ui-ab-fg) 10%, transparent); color: var(--ui-ab-fg); }
+  }
+  .ui-announcement-bar-close:active { transform: scale(0.94); }
+  .ui-announcement-bar-close:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+  .ui-announcement-bar[data-variant="primary"] .ui-announcement-bar-close:focus-visible,
+  .ui-announcement-bar[data-variant="primary"] .ui-announcement-bar-link:focus-visible {
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--ui-primary-foreground) 70%, transparent);
+  }
+
+  /* Phones: text starts at the edge, so a two-line message reads naturally */
+  @media (max-width: 40rem) {
+    .ui-announcement-bar { justify-content: flex-start; }
+    .ui-announcement-bar[data-dismissible] { padding-inline: 1rem 3rem; }
+    .ui-announcement-bar-content { justify-content: flex-start; text-align: start; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-announcement-bar-collapse[data-state="closed"] .ui-announcement-bar { animation: none; }
+  }
+}

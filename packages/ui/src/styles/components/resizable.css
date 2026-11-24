@@ -1,1 +1,85 @@
-/* resizable — being built */
+/* Resizable panels --------------------------------------------------------
+   .ui-resizable-group[data-direction="horizontal|vertical"][data-dragging][data-snapping]
+     > .ui-resizable-panel[data-collapsed]   (flex: <size> 1 0px, set inline in %)
+     > .ui-resizable-handle[role=separator] (> .ui-resizable-grip)
+   The handle is a 1px line with an 8px-wide invisible hit area; it thickens on
+   hover, focus and drag. Panels have overflow hidden; nest a ScrollArea inside.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-resizable-group {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+  }
+  .ui-resizable-group[data-direction="vertical"] { flex-direction: column; }
+  .ui-resizable-group[data-dragging] { user-select: none; }
+  .ui-resizable-group[data-dragging][data-direction="horizontal"] { cursor: col-resize; }
+  .ui-resizable-group[data-dragging][data-direction="vertical"] { cursor: row-resize; }
+
+  .ui-resizable-panel {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+  /* Keyboard collapse and restore glide; dragging follows the pointer with no easing */
+  .ui-resizable-group[data-snapping]:not([data-dragging]) > .ui-resizable-panel {
+    transition: flex-grow var(--ui-spring-smooth-duration) var(--ui-spring-smooth);
+  }
+
+  .ui-resizable-handle {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 0 0 1px;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ui-border);
+    outline: none;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-resizable-handle[data-direction="horizontal"] { cursor: col-resize; }
+  .ui-resizable-handle[data-direction="vertical"] { cursor: row-resize; }
+
+  /* Wider hit area than the visible line (24px on touch) */
+  .ui-resizable-handle::after { content: ""; position: absolute; }
+  .ui-resizable-handle[data-direction="horizontal"]::after { inset-block: 0; inset-inline: -4px; }
+  .ui-resizable-handle[data-direction="vertical"]::after { inset-inline: 0; inset-block: -4px; }
+  @media (pointer: coarse) {
+    .ui-resizable-handle[data-direction="horizontal"]::after { inset-inline: -12px; }
+    .ui-resizable-handle[data-direction="vertical"]::after { inset-block: -12px; }
+  }
+
+  /* The line thickens by painting a wider shadow, so panels never shift */
+  .ui-resizable-handle[data-dragging],
+  .ui-resizable-handle:focus-visible { background-color: var(--ui-ring); }
+  .ui-resizable-handle[data-direction="horizontal"][data-dragging],
+  .ui-resizable-handle[data-direction="horizontal"]:focus-visible { box-shadow: 0 0 0 1px var(--ui-ring); }
+  .ui-resizable-handle[data-direction="vertical"][data-dragging],
+  .ui-resizable-handle[data-direction="vertical"]:focus-visible { box-shadow: 0 0 0 1px var(--ui-ring); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-resizable-handle:hover { background-color: var(--ui-border-strong); }
+    .ui-resizable-handle[data-dragging]:hover { background-color: var(--ui-ring); }
+  }
+
+  .ui-resizable-grip {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.875rem;
+    height: 1.5rem;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--ui-surface-raised);
+    color: var(--ui-muted-foreground);
+    pointer-events: none;
+  }
+  .ui-resizable-handle[data-direction="vertical"] .ui-resizable-grip { width: 1.5rem; height: 0.875rem; }
+  .ui-resizable-handle[data-direction="vertical"] .ui-resizable-grip > svg { transform: rotate(90deg); }
+}

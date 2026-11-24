@@ -1,0 +1,144 @@
+/* Usage meter --------------------------------------------------------------
+   <div class="ui-usage-meter [ui-usage-meter-sm|-lg]" data-tone="default|warning|destructive"
+        [data-segmented] style="--ui-usage-pct:72">
+     .ui-usage-meter-header  > .ui-usage-meter-label + .ui-usage-meter-summary (> .ui-usage-meter-used)
+     .ui-usage-meter-track[role=meter] > .ui-usage-meter-fill > .ui-usage-meter-segment
+                                         (style="--ui-usage-share:N; --ui-usage-color:…")
+     .ui-usage-meter-footer  > .ui-usage-meter-status + .ui-usage-meter-description
+     ul.ui-usage-meter-legend > li.ui-usage-meter-legend-item
+                                (.ui-usage-meter-swatch -legend-label -legend-value)
+   The fill is as wide as the total; segments share it by flex-grow.
+   Mount: the fill uncovers left to right (clip-path) on the smooth spring.
+   Value changes: width and shares glide on the smooth spring (never overshoots).
+   ------------------------------------------------------------------------ */
+
+@keyframes ui-usage-meter-grow {
+  from { clip-path: inset(0 100% 0 0 round 9999px); }
+  to { clip-path: inset(0 0 0 0 round 9999px); }
+}
+@keyframes ui-usage-meter-grow-rtl {
+  from { clip-path: inset(0 0 0 100% round 9999px); }
+  to { clip-path: inset(0 0 0 0 round 9999px); }
+}
+
+@layer components {
+  .ui-usage-meter {
+    --ui-usage-pct: 0;
+    --ui-usage-tone: var(--ui-primary);
+    --ui-usage-tone-text: var(--ui-muted-foreground);
+    --ui-usage-height: 0.5rem;
+    display: grid;
+    gap: 0.5rem;
+    width: 100%;
+    min-width: 0;
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+  .ui-usage-meter-sm { --ui-usage-height: 0.25rem; }
+  .ui-usage-meter-lg { --ui-usage-height: 0.75rem; }
+  .ui-usage-meter[data-tone="warning"] { --ui-usage-tone: var(--ui-warning); --ui-usage-tone-text: var(--ui-warning-text); }
+  .ui-usage-meter[data-tone="destructive"] { --ui-usage-tone: var(--ui-destructive); --ui-usage-tone-text: var(--ui-destructive-text); }
+
+  .ui-usage-meter-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    column-gap: 1rem;
+    row-gap: 0.125rem;
+  }
+  .ui-usage-meter-label { font-weight: 500; color: var(--ui-foreground); }
+  .ui-usage-meter-summary {
+    color: var(--ui-muted-foreground);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .ui-usage-meter-used {
+    font-weight: 500;
+    color: var(--ui-foreground);
+    transition: color var(--ui-duration) var(--ui-ease-standard);
+  }
+  /* A single-colour bar repeats its state on the number */
+  .ui-usage-meter:not([data-segmented])[data-tone="warning"] .ui-usage-meter-used,
+  .ui-usage-meter:not([data-segmented])[data-tone="destructive"] .ui-usage-meter-used { color: var(--ui-usage-tone-text); }
+
+  /* Track */
+  .ui-usage-meter-track {
+    position: relative;
+    display: block;
+    height: var(--ui-usage-height);
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: 9999px;
+    background-color: color-mix(in oklch, var(--ui-foreground) 9%, transparent);
+  }
+  .ui-usage-meter-fill {
+    display: flex;
+    gap: 2px;
+    width: calc(var(--ui-usage-pct) * 1%);
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+    transition: width var(--ui-spring-smooth-duration) var(--ui-spring-smooth);
+    animation: ui-usage-meter-grow calc(var(--ui-spring-smooth-duration) + 160ms) var(--ui-spring-smooth) 80ms both;
+  }
+  [dir="rtl"] .ui-usage-meter-fill { animation-name: ui-usage-meter-grow-rtl; }
+  .ui-usage-meter-segment {
+    display: block;
+    flex: var(--ui-usage-share, 1) 1 0%;
+    min-width: 0;
+    height: 100%;
+    background-color: var(--ui-usage-color, var(--ui-usage-tone));
+    transition:
+      flex-grow var(--ui-spring-smooth-duration) var(--ui-spring-smooth),
+      background-color var(--ui-duration) var(--ui-ease-standard);
+  }
+  /* A segment worth nothing takes no room (and no gap) */
+  .ui-usage-meter-segment[data-empty] { display: none; }
+
+  /* Footer: status + description */
+  .ui-usage-meter-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 0.75rem;
+    row-gap: 0.25rem;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+  }
+  .ui-usage-meter-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-weight: 500;
+    color: var(--ui-usage-tone-text);
+  }
+  .ui-usage-meter-status > svg { flex-shrink: 0; }
+  .ui-usage-meter-description { color: var(--ui-muted-foreground); }
+
+  /* Legend */
+  .ui-usage-meter-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+  }
+  .ui-usage-meter-legend-item { display: inline-flex; align-items: center; gap: 0.375rem; min-width: 0; }
+  .ui-usage-meter-swatch {
+    flex-shrink: 0;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 2px;
+    background-color: var(--ui-usage-color);
+  }
+  .ui-usage-meter-legend-label { color: var(--ui-foreground); }
+  .ui-usage-meter-legend-value { color: var(--ui-muted-foreground); font-variant-numeric: tabular-nums; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-usage-meter-fill { animation: none; }
+  }
+}

@@ -12,7 +12,10 @@
     "build:ui": "npm run build -w ui-kit",
     "typecheck": "npm run typecheck -w ui-kit && npm run typecheck -w docs",
     "test": "npm run test -w ui-kit",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "gen:registry": "node scripts/gen-registry.mjs",
+    "gen:llms": "node scripts/gen-llms.mjs",
+    "release:check": "npm run build && npm run typecheck && npm run test"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

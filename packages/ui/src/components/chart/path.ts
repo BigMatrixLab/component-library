@@ -17,26 +17,30 @@ function tangents(p: Point[]): number[] {
   const n = p.length;
   const d: number[] = [];
   for (let i = 0; i < n - 1; i++) {
-    const dx = p[i + 1].x - p[i].x;
-    d.push(dx === 0 ? 0 : (p[i + 1].y - p[i].y) / dx);
+    const p0 = p[i]!;
+    const p1 = p[i + 1]!;
+    const dx = p1.x - p0.x;
+    d.push(dx === 0 ? 0 : (p1.y - p0.y) / dx);
   }
   const m: number[] = new Array(n);
+  const dd = (i: number) => d[i]!;
+  const mm = (i: number) => m[i]!;
   m[0] = d[0] ?? 0;
   m[n - 1] = d[n - 2] ?? 0;
-  for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+  for (let i = 1; i < n - 1; i++) m[i] = dd(i - 1) * dd(i) <= 0 ? 0 : (dd(i - 1) + dd(i)) / 2;
   for (let i = 0; i < n - 1; i++) {
-    if (d[i] === 0) {
+    if (dd(i) === 0) {
       m[i] = 0;
       m[i + 1] = 0;
       continue;
     }
-    const a = m[i] / d[i];
-    const b = m[i + 1] / d[i];
+    const a = mm(i) / dd(i);
+    const b = mm(i + 1) / dd(i);
     const s = a * a + b * b;
     if (s > 9) {
       const t = 3 / Math.sqrt(s);
-      m[i] = t * a * d[i];
-      m[i + 1] = t * b * d[i];
+      m[i] = t * a * dd(i);
+      m[i + 1] = t * b * dd(i);
     }
   }
   return m;
@@ -47,9 +51,12 @@ export function monotoneControls(p: Point[]): { c1: Point; c2: Point }[] {
   if (p.length < 2) return [];
   const m = tangents(p);
   return p.slice(0, -1).map((a, i) => {
-    const b = p[i + 1];
+    const b = p[i + 1]!;
     const h = b.x - a.x;
-    return { c1: { x: a.x + h / 3, y: a.y + (m[i] * h) / 3 }, c2: { x: b.x - h / 3, y: b.y - (m[i + 1] * h) / 3 } };
+    return {
+      c1: { x: a.x + h / 3, y: a.y + (m[i]! * h) / 3 },
+      c2: { x: b.x - h / 3, y: b.y - (m[i + 1]! * h) / 3 },
+    };
   });
 }
 
@@ -59,11 +66,14 @@ function segments(p: Point[], curve: Curve): string {
   if (curve === 'linear') return p.slice(1).map((q) => `L${pt(q.x, q.y)}`).join('');
   if (curve === 'step') {
     let s = '';
-    for (let i = 1; i < p.length; i++) s += `L${pt(p[i].x, p[i - 1].y)}L${pt(p[i].x, p[i].y)}`;
+    for (let i = 1; i < p.length; i++) {
+      const cur = p[i]!;
+      s += `L${pt(cur.x, p[i - 1]!.y)}L${pt(cur.x, cur.y)}`;
+    }
     return s;
   }
   return monotoneControls(p)
-    .map((c, i) => `C${pt(c.c1.x, c.c1.y)} ${pt(c.c2.x, c.c2.y)} ${pt(p[i + 1].x, p[i + 1].y)}`)
+    .map((c, i) => `C${pt(c.c1.x, c.c1.y)} ${pt(c.c2.x, c.c2.y)} ${pt(p[i + 1]!.x, p[i + 1]!.y)}`)
     .join('');
 }
 
@@ -84,7 +94,7 @@ function runs(points: (Point | null)[]): Point[][] {
 
 export function linePath(points: (Point | null)[], curve: Curve = 'monotone'): string {
   return runs(points)
-    .map((run) => `M${pt(run[0].x, run[0].y)}${segments(run, curve)}`)
+    .map((run) => `M${pt(run[0]!.x, run[0]!.y)}${segments(run, curve)}`)
     .join('');
 }
 
@@ -96,8 +106,10 @@ export function areaPath(top: Point[], bottom: number | Point[], curve: Curve = 
   if (top.length === 0) return '';
   const low = typeof bottom === 'number' ? top.map((q) => ({ x: q.x, y: bottom })) : bottom;
   const back = [...low].reverse();
-  const head = `M${pt(top[0].x, top[0].y)}${segments(top, curve)}`;
-  return `${head}L${pt(back[0].x, back[0].y)}${segments(back, curve)}Z`;
+  const first = top[0]!;
+  const last = back[0] ?? first;
+  const head = `M${pt(first.x, first.y)}${segments(top, curve)}`;
+  return `${head}L${pt(last.x, last.y)}${segments(back, curve)}Z`;
 }
 
 export type BarEdge = 'top' | 'bottom' | 'left' | 'right' | 'none';

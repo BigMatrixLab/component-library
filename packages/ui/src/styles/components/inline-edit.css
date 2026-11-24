@@ -1,1 +1,152 @@
-/* inline-edit — being built */
+/* Inline edit ---------------------------------------------------------------
+   <span class="ui-inline-edit" data-state="view|edit" [data-pending] [data-invalid]>
+     <span class="ui-inline-edit-sizer">text</span>        invisible; gives the cell the text's width
+     <button class="ui-inline-edit-display">text</button>  or  <input class="ui-inline-edit-input">
+     <span class="ui-inline-edit-affix">pencil | spinner | check</span>
+     <span class="ui-inline-edit-error" role="alert">…</span>
+   </span>
+   Sizer, button and input share one grid cell, one font and one padding + 1px border.
+   A negative margin of (padding + border) puts the text exactly where plain text would be,
+   so the swap changes colour and border — never position.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-inline-edit {
+    --ui-ie-px: 0.5rem;
+    --ui-ie-py: 0.125rem;
+    position: relative;
+    display: inline-grid;
+    max-width: calc(100% + 2 * (var(--ui-ie-px) + 1px));
+    margin-inline: calc(-1 * (var(--ui-ie-px) + 1px));
+    margin-block: calc(-1 * (var(--ui-ie-py) + 1px));
+    vertical-align: baseline;
+    font: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+  }
+
+  .ui-inline-edit-sizer,
+  .ui-inline-edit-display,
+  .ui-inline-edit-input {
+    grid-area: 1 / 1;
+    box-sizing: border-box;
+    min-width: 3ch;
+    margin: 0;
+    padding: var(--ui-ie-py) var(--ui-ie-px);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+    text-align: start;
+  }
+  .ui-inline-edit-sizer {
+    visibility: hidden;
+    overflow: hidden;
+    white-space: pre;
+    pointer-events: none;
+  }
+
+  .ui-inline-edit-display,
+  .ui-inline-edit-input {
+    width: 100%;
+    height: 100%;
+    align-self: stretch;
+    color: inherit;
+    outline: none;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      border-color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+
+  .ui-inline-edit-display {
+    overflow: hidden;
+    background: transparent;
+    white-space: pre;
+    text-overflow: ellipsis;
+    cursor: text;
+    appearance: none;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ui-inline-edit-display:disabled { cursor: default; }
+  .ui-inline-edit-placeholder { color: var(--ui-muted-foreground); }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-inline-edit-display:hover:not(:disabled) {
+      background-color: var(--ui-accent);
+      border-color: var(--ui-border);
+    }
+  }
+  .ui-inline-edit-display:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent); }
+
+  .ui-inline-edit-input {
+    background-color: var(--ui-background);
+    border-color: var(--ui-border-strong);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 45%, transparent);
+    text-overflow: ellipsis;
+  }
+  .ui-inline-edit-input::placeholder { color: var(--ui-muted-foreground); opacity: 1; }
+  .ui-inline-edit[data-invalid] .ui-inline-edit-input {
+    border-color: var(--ui-destructive);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-destructive) 30%, transparent);
+  }
+  .ui-inline-edit[data-pending] .ui-inline-edit-input { opacity: 0.7; cursor: progress; }
+
+  /* Pencil hint / spinner / saved check: beside the text, never in the flow */
+  .ui-inline-edit-affix {
+    position: absolute;
+    inset-inline-start: 100%;
+    top: 50%;
+    display: inline-flex;
+    translate: 0 -50%;
+    margin-inline-start: 0.125rem;
+    color: var(--ui-muted-foreground);
+    pointer-events: none;
+  }
+  .ui-inline-edit-hint {
+    opacity: 0;
+    transition: opacity var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-inline-edit[data-state="view"]:hover .ui-inline-edit-hint { opacity: 1; }
+  }
+  .ui-inline-edit[data-state="view"]:has(:focus-visible) .ui-inline-edit-hint { opacity: 1; }
+  .ui-inline-edit-ok {
+    color: var(--ui-success-text);
+    animation: ui-pop-in var(--ui-duration) var(--ui-ease-out) both, ui-fade-out 300ms var(--ui-ease-in) 1100ms forwards;
+  }
+
+  .ui-inline-edit-error {
+    position: absolute;
+    inset-inline-start: 0;
+    top: calc(100% + 0.25rem);
+    z-index: 1;
+    padding-inline: var(--ui-ie-px);
+    color: var(--ui-destructive-text);
+    font-size: var(--text-xs);
+    line-height: 1rem;
+    font-weight: 400;
+    letter-spacing: normal;
+    white-space: nowrap;
+    animation: ui-rise-in var(--ui-duration) var(--ui-ease-out) both;
+  }
+
+  .ui-inline-edit-live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* Reduced motion: borders and fills still change; no rise, no pop */
+@media (prefers-reduced-motion: reduce) {
+  .ui-inline-edit-error { animation: ui-fade-in 1ms both; }
+  .ui-inline-edit-ok { animation: ui-fade-out 300ms linear 1100ms forwards; }
+}

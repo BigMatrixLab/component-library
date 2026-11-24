@@ -8,6 +8,7 @@
 @import "./tokens/palette.css";
 @import "./tokens/semantic.css";
 @import "./tokens/accents.css";
+@import "./tokens/themes.css";
 @import "./tokens/tailwind.css";
 @import "./base.css";
 @import "./motion.css";
@@ -79,6 +80,12 @@
 @import "./components/inline-edit.css";
 @import "./components/expanding-search.css";
 @import "./components/theme-switch.css";
+@import "./components/billing-toggle.css";
+@import "./components/text-shimmer.css";
+@import "./components/password-strength.css";
+@import "./components/usage-meter.css";
+@import "./components/announcement-bar.css";
+@import "./components/onboarding-checklist.css";
 
 /* Let Tailwind see utility classes used inside the components */
 @source "../components";

@@ -65,7 +65,7 @@ export function DonutChart({
   const percent = createValueFormatter({ style: 'percent', maximumFractionDigits: 1 }, locale);
   const names = data.map((row) => String(row[index] ?? ''));
   const cols = data.map((_, i) => resolveColor(colors?.[i], i));
-  const total = (rows: ChartDatum[]) => rows.reduce((t, row, i) => t + (hidden.has(names[i]) ? 0 : Math.max(toNumber(row[valueKey]) ?? 0, 0)), 0);
+  const total = (rows: ChartDatum[]) => rows.reduce((t, row, i) => t + (hidden.has(names[i]!) ? 0 : Math.max(toNumber(row[valueKey]) ?? 0, 0)), 0);
   const sum = total(data);
   const name =
     rest['aria-label'] ??
@@ -76,7 +76,7 @@ export function DonutChart({
       height={height}
       vars={chartVars(cols)}
       legend={legend}
-      legendItems={data.map((_, i) => ({ key: names[i], label: names[i], color: seriesVar(i), visible: !hidden.has(names[i]) }))}
+      legendItems={data.map((_, i) => ({ key: names[i]!, label: names[i]!, color: seriesVar(i), visible: !hidden.has(names[i]!) }))}
       onLegendToggle={(key) => toggle(key, data.length)}
       className={className}
       table={{
@@ -84,7 +84,7 @@ export function DonutChart({
         columns: [index, valueKey, 'Share'],
         rows: data.map((row, i) => {
           const v = toNumber(row[valueKey]) ?? 0;
-          return [names[i], fmt(v), sum > 0 ? percent(v / sum) : ''];
+          return [names[i]!, fmt(v), sum > 0 ? percent(v / sum) : ''];
         }),
       }}
     >
@@ -149,7 +149,7 @@ function DonutPlot(p: DonutPlotProps) {
   const inner = outer * Math.min(Math.max(p.innerRadius, 0), 0.95);
 
   const { slices, sum } = useMemo(() => {
-    const vals = p.rows.map((row, i) => (p.hidden.has(p.names[i]) ? 0 : Math.max(toNumber(row[p.valueKey]) ?? 0, 0)));
+    const vals = p.rows.map((row, i) => (p.hidden.has(p.names[i]!) ? 0 : Math.max(toNumber(row[p.valueKey]) ?? 0, 0)));
     const sum = vals.reduce((a, b) => a + b, 0);
     let acc = 0;
     const slices: Slice[] = [];
@@ -225,7 +225,7 @@ function DonutPlot(p: DonutPlotProps) {
         <ChartTooltip visible={!!current} x={tipX} y={tipY} width={p.width} height={p.height}>
           {current && (
             <TooltipContent
-              rows={[{ color: seriesVar(current.i), name: p.names[current.i], value: `${p.fmt(current.value)} · ${p.percent(current.value / sum)}` }]}
+              rows={[{ color: seriesVar(current.i), name: p.names[current.i]!, value: `${p.fmt(current.value)} · ${p.percent(current.value / sum)}` }]}
             />
           )}
         </ChartTooltip>

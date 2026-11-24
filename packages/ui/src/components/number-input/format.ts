@@ -1,5 +1,11 @@
 export type NumberStyle = 'number' | 'currency' | 'percent';
 
+const INTL_STYLE: Record<NumberStyle, Intl.NumberFormatOptions['style']> = {
+  number: 'decimal',
+  currency: 'currency',
+  percent: 'percent',
+};
+
 export interface NumberFormatConfig {
   style?: NumberStyle;
   /** BCP 47 tag such as "en-US" or "de-DE". Default: the runtime locale. */
@@ -15,7 +21,7 @@ export function countDecimals(n: number): number {
   if (!Number.isFinite(n)) return 0;
   const s = String(n);
   if (s.includes('e-')) {
-    const [mantissa, exp] = s.split('e-');
+    const [mantissa = '', exp] = s.split('e-');
     return (mantissa.split('.')[1]?.length ?? 0) + Number(exp);
   }
   return s.split('.')[1]?.length ?? 0;
@@ -39,7 +45,8 @@ export function clampNumber(n: number, min?: number, max?: number): number {
  */
 export function createFormatter(config: NumberFormatConfig = {}, precision = 0): Intl.NumberFormat {
   const style = config.style ?? 'number';
-  const options: Intl.NumberFormatOptions = { style };
+  const intlStyle = INTL_STYLE[style];
+  const options: Intl.NumberFormatOptions = { style: intlStyle };
   if (style === 'currency') options.currency = config.currency ?? 'USD';
 
   const min = config.minimumFractionDigits;
@@ -56,7 +63,7 @@ export function createFormatter(config: NumberFormatConfig = {}, precision = 0):
     return new Intl.NumberFormat(config.locale, options);
   } catch {
     try {
-      return new Intl.NumberFormat(config.locale, { style, currency: options.currency });
+      return new Intl.NumberFormat(config.locale, { style: intlStyle, currency: options.currency });
     } catch {
       return new Intl.NumberFormat();
     }

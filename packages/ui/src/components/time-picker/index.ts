@@ -1,2 +1,3 @@
-// time-picker — being built; replace with: export * from './time-picker';
-export {};
+export * from './time-picker';
+export { buildTimeOptions, formatTimeLabel, formatTimeValue, parseTimeValue, resolveHour12 } from './time-utils';
+export type { TimeParts } from './time-utils';

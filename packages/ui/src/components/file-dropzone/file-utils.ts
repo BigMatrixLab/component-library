@@ -62,7 +62,7 @@ export function describeAccept(accept?: string): string {
     if (token === 'audio/*') return 'Audio files';
     if (token === 'text/*') return 'Text files';
     const subtype = token.split('/')[1] ?? token;
-    return subtype.split('+')[0].split('.').pop()!.toUpperCase();
+    return subtype.split('+')[0]!.split('.').pop()!.toUpperCase();
   });
   const unique = Array.from(new Set(labels));
   if (unique.length <= 1) return unique[0] ?? '';
@@ -115,9 +115,9 @@ export function validateFiles(
   if (overflow.length) {
     const rule = !multiple ? 'Only one file is allowed.' : `The limit is ${limit} ${limit === 1 ? 'file' : 'files'}.`;
     rejected.push({
-      file: overflow[0],
+      file: overflow[0]!,
       code: 'too-many',
-      message: overflow.length === 1 ? `${overflow[0].name} was not added. ${rule}` : `${overflow.length} files were not added. ${rule}`,
+      message: overflow.length === 1 ? `${overflow[0]!.name} was not added. ${rule}` : `${overflow.length} files were not added. ${rule}`,
     });
   }
 

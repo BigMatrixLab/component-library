@@ -1,1 +1,17 @@
-/* combobox — being built */
+/* Combobox ------------------------------------------------------------------
+   The field is an <InputGroup>: <div class="ui-input-group"><input class="ui-input" role="combobox">
+   <button class="ui-input-action">chevron</button></div>. The floating list is the shared
+   .ui-listbox from select.css. This file only adds what is specific to the combobox.
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-combobox-chevron {
+    transition: transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy);
+  }
+  .ui-input-action[aria-expanded="true"] > .ui-combobox-chevron { transform: rotate(180deg); }
+
+  /* "Create …" row */
+  .ui-combobox-create .ui-option-label { display: flex; align-items: center; gap: 0.5rem; }
+  .ui-combobox-create-icon { flex-shrink: 0; width: 1rem; height: 1rem; color: var(--ui-muted-foreground); }
+  .ui-combobox-create[data-highlighted] .ui-combobox-create-icon { color: inherit; }
+}

@@ -1,1 +1,114 @@
-/* time-picker — being built */
+/* TimePicker --------------------------------------------------------------
+   Built on the shared .ui-picker-field / .ui-picker-panel of date-picker.css.
+
+   <div class="ui-picker-field ui-timepicker" role="group" data-state data-disabled data-invalid>
+     <svg class="ui-picker-icon ui-timepicker-icon">            (only when there is no list)
+     <div class="ui-timepicker-segments">
+       <input class="ui-timepicker-segment" role="spinbutton" data-segment="hour|minute|second|period">
+       <span class="ui-timepicker-sep">:</span> …
+     </div>
+     <button class="ui-input-action" aria-label="Clear time">  <button class="ui-input-action" aria-haspopup="dialog">
+     <input type="hidden" name="start" value="09:30">
+     <div class="ui-floating ui-picker-panel ui-timepicker-panel" popover="manual">
+       <div class="ui-timepicker-list" role="listbox"> <div class="ui-timepicker-option" role="option" aria-selected [data-current]">
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-timepicker { cursor: text; padding-inline-start: var(--ui-input-px, 0.75rem); gap: 0.5rem; }
+  .ui-timepicker[data-disabled] { cursor: not-allowed; }
+  .ui-timepicker-icon { flex-shrink: 0; }
+
+  /* The ring follows the segment you are in */
+  .ui-timepicker:has(.ui-timepicker-segment:focus) {
+    --ui-input-border: var(--ui-ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-ring) 25%, transparent);
+  }
+  .ui-timepicker[data-invalid]:has(.ui-timepicker-segment:focus) {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ui-destructive) 25%, transparent);
+  }
+
+  .ui-timepicker-segments {
+    display: flex;
+    flex: 1 1 0%;
+    align-items: center;
+    min-width: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .ui-timepicker-sep { color: var(--ui-muted-foreground); user-select: none; }
+  .ui-timepicker-sep:empty { width: 0.25rem; }
+
+  .ui-timepicker-segment {
+    --ui-seg-ch: 2;
+    width: calc(var(--ui-seg-ch) * 1ch + 0.5rem);
+    height: calc(var(--ui-input-h, 2.25rem) - 0.75rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ui-foreground);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    /* Digits are typed through key handlers; no caret or selection colour to show */
+    caret-color: transparent;
+    outline: none;
+    cursor: text;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      color var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-timepicker-segment::placeholder { color: var(--ui-muted-foreground); opacity: 1; }
+  .ui-timepicker-segment::selection { background: transparent; }
+  .ui-timepicker-segment:focus {
+    background-color: var(--ui-accent);
+    color: var(--ui-accent-foreground);
+  }
+  .ui-timepicker-segment:disabled { cursor: not-allowed; }
+  .ui-timepicker-segment[data-segment="period"] { text-transform: uppercase; }
+
+  /* ---- Time list -------------------------------------------------------- */
+  .ui-timepicker-panel { min-width: 8.5rem; }
+  .ui-timepicker-list {
+    position: relative;
+    max-height: 15rem;
+    padding: 0.25rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  .ui-timepicker-option {
+    display: flex;
+    align-items: center;
+    height: 2rem;
+    padding-inline: 0.625rem;
+    border-radius: var(--radius-md);
+    color: var(--ui-foreground);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color var(--ui-duration-fast) var(--ui-ease-standard),
+      color var(--ui-duration-fast) var(--ui-ease-standard),
+      box-shadow var(--ui-duration-fast) var(--ui-ease-standard);
+  }
+  .ui-timepicker-option[data-current] { background-color: var(--ui-accent); color: var(--ui-accent-foreground); }
+  .ui-timepicker-option[aria-selected="true"] {
+    background-color: var(--ui-primary);
+    color: var(--ui-primary-foreground);
+    font-weight: 500;
+  }
+  .ui-timepicker-option:focus-visible { box-shadow: inset 0 0 0 2px color-mix(in oklch, var(--ui-ring) 70%, transparent); }
+  .ui-timepicker-option[aria-selected="true"]:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--ui-primary-foreground);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ui-timepicker-option:hover:not([aria-selected="true"]) { background-color: var(--ui-accent); color: var(--ui-accent-foreground); }
+  }
+  @media (pointer: coarse) {
+    .ui-timepicker-option { height: 2.75rem; }
+    .ui-timepicker-segment { min-width: 2.25rem; }
+  }
+}

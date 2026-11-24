@@ -6,8 +6,8 @@ describe('monotoneControls', () => {
   it('never overshoots the data between two points', () => {
     const pts = [0, 10, 11, 11, 40, 41, 5, 5, 5, 60].map((y, i) => ({ x: i * 20, y }));
     monotoneControls(pts).forEach((c, i) => {
-      const lo = Math.min(pts[i].y, pts[i + 1].y);
-      const hi = Math.max(pts[i].y, pts[i + 1].y);
+      const lo = Math.min(pts[i]!.y, pts[i + 1]!.y);
+      const hi = Math.max(pts[i]!.y, pts[i + 1]!.y);
       expect(c.c1.y).toBeGreaterThanOrEqual(lo - 1e-9);
       expect(c.c1.y).toBeLessThanOrEqual(hi + 1e-9);
       expect(c.c2.y).toBeGreaterThanOrEqual(lo - 1e-9);
@@ -17,9 +17,9 @@ describe('monotoneControls', () => {
   it('keeps flat runs flat and turns at extremes', () => {
     const pts = [5, 5, 20, 5].map((y, i) => ({ x: i * 10, y }));
     const c = monotoneControls(pts);
-    expect(c[0].c1.y).toBe(5);
-    expect(c[0].c2.y).toBe(5);
-    expect(c[1].c2.y).toBe(20);
+    expect(c[0]!.c1.y).toBe(5);
+    expect(c[0]!.c2.y).toBe(5);
+    expect(c[1]!.c2.y).toBe(20);
   });
 });
 
@@ -31,7 +31,7 @@ describe('linePath', () => {
     expect(linePath(pts, 'monotone')).toMatch(/^M0 10C.*C/);
   });
   it('breaks the line at gaps', () => {
-    expect(linePath([pts[0], pts[1], null, pts[2], { x: 30, y: 1 }], 'linear')).toBe('M0 10L10 20M20 5L30 1');
+    expect(linePath([pts[0]!, pts[1]!, null, pts[2]!, { x: 30, y: 1 }], 'linear')).toBe('M0 10L10 20M20 5L30 1');
   });
 });
 
@@ -66,10 +66,10 @@ describe('arcPath', () => {
     expect(d.endsWith('Z')).toBe(true);
     const n = nums(d);
     expect(n.every(Number.isFinite)).toBe(true);
-    const ends = [...d.matchAll(/([MLA])([^MLAZ]*)/g)].map((m) => nums(m[2]).slice(-2));
+    const ends = [...d.matchAll(/([MLA])([^MLAZ]*)/g)].map((m) => nums(m[2]!).slice(-2));
     expect(ends.length).toBeGreaterThan(8);
     for (const [x, y] of ends) {
-      const r = dist(x, y);
+      const r = dist(x!, y!);
       expect(r).toBeLessThan(80.5);
       expect(r).toBeGreaterThan(49.5);
     }

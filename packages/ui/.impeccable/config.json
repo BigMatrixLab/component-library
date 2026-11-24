@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "src/styles/components/text-shimmer.css"
+        ],
+        "createdAt": "2026-11-24T18:03:03.596Z",
+        "reason": "task brief from lead agent: text-shimmer spec requires a CSS gradient + background-clip sweep"
+      }
+    ]
+  }
+}

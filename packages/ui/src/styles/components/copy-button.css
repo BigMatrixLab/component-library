@@ -1,1 +1,88 @@
-/* copy-button — being built */
+/* Copy button -------------------------------------------------------------
+   <button class="ui-btn … ui-copy" data-state="idle|copied|error">
+     .ui-copy-icons > svg.ui-copy-icon-idle | -done | -error  (stacked, swap with a pop)
+     .ui-copy-label > .ui-copy-text-idle | -done | -error     (stacked, width = widest)
+   + .ui-copy-status  (visually hidden polite live region)
+   ------------------------------------------------------------------------ */
+
+@layer components {
+  .ui-copy-icons {
+    position: relative;
+    display: inline-grid;
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+  }
+  .ui-copy-icons > svg {
+    grid-area: 1 / 1;
+    width: 1rem;
+    height: 1rem;
+    transition:
+      transform var(--ui-spring-snappy-duration) var(--ui-spring-snappy),
+      opacity var(--ui-duration-fast) var(--ui-ease-out),
+      filter var(--ui-duration-fast) var(--ui-ease-out);
+  }
+  .ui-copy-icon-done,
+  .ui-copy-icon-error {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: blur(var(--ui-blur-subtle));
+  }
+
+  .ui-copy[data-state="copied"] .ui-copy-icon-idle,
+  .ui-copy[data-state="error"] .ui-copy-icon-idle {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: blur(var(--ui-blur-subtle));
+  }
+  .ui-copy[data-state="copied"] .ui-copy-icon-done {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    color: var(--ui-success-text);
+    animation: ui-copy-pop var(--ui-spring-snappy-duration) var(--ui-ease-out) both;
+  }
+  .ui-copy[data-state="error"] .ui-copy-icon-error {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    color: var(--ui-destructive-text);
+    animation: ui-copy-shake 360ms var(--ui-ease-out) both;
+  }
+
+  /* Labelled: the three texts share one grid cell, so the button never changes width */
+  .ui-copy-label { display: inline-grid; }
+  .ui-copy-label > span {
+    grid-area: 1 / 1;
+    text-align: center;
+    transition: opacity var(--ui-duration-fast) var(--ui-ease-out), transform var(--ui-duration) var(--ui-ease-out);
+  }
+  .ui-copy-text-done,
+  .ui-copy-text-error { opacity: 0; transform: translateY(4px); }
+  .ui-copy[data-state="copied"] .ui-copy-text-idle,
+  .ui-copy[data-state="error"] .ui-copy-text-idle { opacity: 0; transform: translateY(-4px); }
+  .ui-copy[data-state="copied"] .ui-copy-text-done { opacity: 1; transform: none; }
+  .ui-copy[data-state="error"] .ui-copy-text-error { opacity: 1; transform: none; }
+
+  .ui-copy-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@keyframes ui-copy-pop {
+  0% { transform: scale(0.5); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+@keyframes ui-copy-shake {
+  0% { transform: scale(0.5); }
+  40% { transform: scale(1.05) translateX(-2px); }
+  70% { transform: scale(1) translateX(2px); }
+  100% { transform: none; }
+}
